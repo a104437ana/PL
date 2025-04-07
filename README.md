@@ -14,7 +14,9 @@ Para mais detalhes sobre a implementação deste projeto, consulte o [relatório
 
 O código desenvolvido pode ser encontrado na pasta [src](src).
 ## Autores
-### Grupo 12
+### Grupo 12 - Equipa Bugbusters 🪲🚫
 - A104437 - Ana Sá Oliveira
 - A104263 - Inês Silva Marques
 - A76350 - José Rafael de Oliveira Vilas Boas
+
+![BUGBUSTERS](report/cover/Bugbusters.png)
