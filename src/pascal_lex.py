@@ -161,6 +161,6 @@ begin
 writeln('Ola, Mundo!');
 end."""
 
-lexer.input(texto3)
+lexer.input(texto2)
 for tok in lexer:
     print(tok)
