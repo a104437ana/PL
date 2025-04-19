@@ -40,13 +40,41 @@ reserved = {
 }
 
 tokens = [
+    'NOT_EQUAL',
+    'LESS_EQUAL',
+    'GREATER_EQUAL',
+    'ASSIGNMENT',
+    'RANGE',
+    
     'ID',
     'QUOTE',
-    'COMMENT',
-    'ASSIGNMENT'
+    'COMMENT'
+    
 ] + list(reserved.values())
 
-literals = [';','.','(',')',',','>','<']
+literals = [
+    '+',
+    '-',
+    '*',
+    '/',
+    '=',
+    '<',
+    '>',
+    '[',
+    ']',
+    '.',
+    ',',
+    ':',
+    ';',
+    #seta pa cima?
+    '(',
+    ')']
+
+t_NOT_EQUAL = r'<>'
+t_LESS_EQUAL = r'<='
+t_GREATER_EQUAL = r'>='
+t_ASSIGNMENT = r":="
+t_RANGE = r'..'
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
@@ -58,8 +86,6 @@ def t_QUOTE(t):
     return t
 
 t_COMMENT = r"\{[^}]+\}"
-
-t_ASSIGNMENT = r":="
 
 def t_newline(t):
     r'\n+'
