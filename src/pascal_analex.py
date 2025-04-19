@@ -1,7 +1,13 @@
 import ply.lex as lex
 
+reserved = {
+    'program': 'PROGRAM',
+    # Adicione mais palavras reserved se necessário
+}
+
 tokens = [
-            "PROGRAM", "SEMICOLON", "VAR", "BEGIN", "END", "PERIOD", # início e fim de estados
+            #"PROGRAM",
+            "SEMICOLON", "VAR", "BEGIN", "END", "PERIOD", # início e fim de estados
             "ID", "OPAREN", "CPAREN", "QUOTE", "COMMA", "COLON", "DATATYPE", "COMMENT", # geral
             "IF", "ELSE", "THEN", "WHILE", "FOR", "DO", # controlo de fluxo
             "TO", "DOWNTO", "ASSIGNMENT", # variáveis
@@ -10,17 +16,20 @@ tokens = [
             "EQUAL", "NOTEQUAL", "LESSERTHAN", "GREATERTHAN", "LESSEREQUALS", "GREATEREQUALS", # comparação
             "BOOL", "AND", "OR", "NOT", # lógica
             "IGNORE"
-          ]
-states = [("PROG", "exclusive"), ("VARS", "exclusive"), ("CODE", "exclusive")]
+          ] + list(reserved.values())
+states = [#("PROG", "exclusive"), 
+          ("VARS", "exclusive"), ("CODE", "exclusive")]
 
+'''
 def t_PROGRAM(t):
     r'program'
     t.lexer.begin("PROG")
     return t
+'''
 
-def t_PROG_SEMICOLON(t):
+def t_INITIAL_SEMICOLON(t):
     r';'
-    t.lexer.begin("INITIAL")
+    #t.lexer.begin("INITIAL")
     return t
 
 def t_VAR(t):
@@ -47,6 +56,7 @@ t_PERIOD = r'\.'
 
 def t_PROG_ID(t):
     r'[\w|$]+'
+    t.type = reserved.get(t.value, 'ID')
     return t
 
 def t_VARS_DATATYPE(t):
@@ -123,7 +133,7 @@ def t_ANY_newline(t):
     t.lexer.lineno += len(t.value)
 
 def t_ANY_error(t):
-    print(f'Símbolo inválido na linha {t.lineno}: {t.value}')
+    print(f'Símbolo inválido na linha {t.lineno}: {t.value[0]}')
     t.lexer.skip(1)
     pass
 
