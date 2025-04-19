@@ -1,19 +1,42 @@
 import ply.lex as lex
 
 reserved = {
-    'program' : 'PROGRAM',
-    'var' : 'VAR',
+    'and' : 'AND',
+    'array' : 'ARRAY',
     'begin' : 'BEGIN',
-    'end' : 'END',
-    'and' : 'AND',#lógica
-    'or' : 'OR',
-    'not' : 'NOT',
-    'if' : 'IF',#controlo de fluxo
+    'case' : 'CASE',
+    'const' : 'CONST',
+    'div' : 'DIV',
+    'do' : 'DO',
+    'downto' : 'DOWNTO',
     'else' : 'ELSE',
-    'then' : 'THEN',
-    'while' : 'WHILE',
+    'end' : 'END',
+    'file' : 'FILE',
     'for' : 'FOR',
-    'do' : 'DO'
+    'foward' : 'FOWARD',
+    'function' : 'FUNCTION',
+    'goto' : 'GOTO',
+    'if' : 'IF',
+    'in' : 'IN',
+    'label' : 'LABEL',
+    'mod' : 'MOD',
+    'nil' : 'NIL',
+    'not' : 'NOT',
+    'of' : 'OF',
+    'or' : 'OR',
+    'packed' : 'PACKED',
+    'procedure' : 'PROCEDURE',
+    'program' : 'PROGRAM',
+    'record' : 'RECORD',
+    'repeat' : 'REPEAT',
+    'set' : 'SET',
+    'then' : 'THEN',
+    'to' : 'TO',
+    'type' : 'TYPE',
+    'until' : 'UNTIL',
+    'var' : 'VAR',
+    'while' : 'WHILE',
+    'with' : 'WITH'
 }
 
 tokens = [
