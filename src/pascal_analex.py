@@ -45,8 +45,11 @@ tokens = [
     'GREATER_EQUAL',
     'ASSIGNMENT',
     'RANGE',
-    
+    'LPA','ARP','LPP','PRP',
     'ID',
+    'INT',
+    
+    'REAL',
     'QUOTE',
     'COMMENT'
     
@@ -66,7 +69,7 @@ literals = [
     ',',
     ':',
     ';',
-    #seta pa cima?
+    '^',
     '(',
     ')']
 
@@ -76,9 +79,25 @@ t_GREATER_EQUAL = r'>='
 t_ASSIGNMENT = r":="
 t_RANGE = r'..'
 
+t_LPA = r'(*'
+t_ARP = r'*)'
+t_LPP = r'(.'
+t_PRP = r'.)'
+
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'ID')
+    t_lower = t.value.lower()
+    t.type = reserved.get(t_lower,'ID')
+    return t
+
+def t_REAL(t):
+    r'-?\d+\.\d+([eE][-+]?\d+)?'
+    t.value = float(t.value)
+    return t
+
+def t_INT(t):
+    r'-?\d+'
+    t.value = int(t.value)
     return t
 
 def t_QUOTE(t):
@@ -99,7 +118,7 @@ def t_error(t):
 
 lexer = lex.lex()
 
-texto = """program Maior3;
+texto = """Program Maior3;
 var
 num1, num2, num3, maior: Integer;
 begin
