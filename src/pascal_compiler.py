@@ -1,1 +1,1 @@
-from pascal_yacc import parser
+from pascal_anasin import parser

@@ -1,4 +1,5 @@
 import ply.lex as lex
+from pascal_exemplos import *
 
 reserved = {
     'and' : 'AND',
@@ -48,9 +49,8 @@ tokens = [
     'LPA','ARP','LPP','PRP',
     'ID',
     'INT',
-    
     'REAL',
-    'QUOTE',
+    'STRING',
     'COMMENT'
     
 ] + list(reserved.values())
@@ -77,12 +77,12 @@ t_NOT_EQUAL = r'<>'
 t_LESS_EQUAL = r'<='
 t_GREATER_EQUAL = r'>='
 t_ASSIGNMENT = r":="
-t_RANGE = r'..'
+t_RANGE = r'\.\.'
 
-t_LPA = r'(*'
-t_ARP = r'*)'
-t_LPP = r'(.'
-t_PRP = r'.)'
+t_LPA = r'\(\*'
+t_ARP = r'\*\)'
+t_LPP = r'\(\.'
+t_PRP = r'\.\)'
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
@@ -91,20 +91,20 @@ def t_ID(t):
     return t
 
 def t_REAL(t):
-    r'-?\d+\.\d+([eE][-+]?\d+)?'
+    r'[+-]?(\d+\.\d+([eE][+-]?\d+)?|\d+[eE][+-]?\d+)'
     t.value = float(t.value)
     return t
 
 def t_INT(t):
-    r'-?\d+'
+    r'[+-]?\d+'
     t.value = int(t.value)
     return t
 
-def t_QUOTE(t):
-    r'\'[^\']+\'|\"[^\"]+\"'
+def t_STRING(t):
+    r'\'[^\']+\'|\"[^\"]*\"'
     return t
 
-t_COMMENT = r"\{[^}]+\}"
+t_ignore_COMMENT = r"\{.*\}|\(\*.*\*\)"
 
 def t_newline(t):
     r'\n+'
@@ -116,30 +116,10 @@ def t_error(t):
     print("Illegal character ('%s',%s,%s)"% (t.value[0], t.lineno, t.lexpos))
     t.lexer.skip(1)
 
-lexer = lex.lex()
+def analex(text):
+    lexer = lex.lex()
+    lexer.input(text)
+    for tok in lexer:
+        print(tok)
 
-texto = """Program Maior3;
-var
-num1, num2, num3, maior: Integer;
-begin
-{ Ler 3 números }
-Write('Introduza o primeiro número: ');
-ReadLn(num1);
-Write('Introduza o segundo número: ');
-ReadLn(num2);
-Write('Introduza o terceiro número: ');
-ReadLn(num3);
-{ Calcular o maior }
-if num1 > num2 then
-if num1 > num3 then maior := num1
-else maior := num3
-else
-if num2 > num3 then maior := num2
-else maior := num3;
-{ Escrever o resultado }
-WriteLn('O maior é: ', maior)
-end."""
-
-lexer.input(texto)
-for tok in lexer:
-    print(tok)
+analex(exemplo7)

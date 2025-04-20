@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from pascal_lex import tokens
+from pascal_analex import tokens, literals
 
 # Regras
 
