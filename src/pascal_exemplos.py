@@ -1,3 +1,5 @@
+exemplo0 = '''begin end.'''
+
 exemplo1 = '''
 program HelloWorld;
 begin
