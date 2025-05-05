@@ -1,4 +1,4 @@
-TEX_FILE = Relatório.tex
+TEX_FILE = Relatorio.tex
 BUILD_DIR = build
 PDF_FILE = $(BUILD_DIR)/$(TEX_FILE:.tex=.pdf)
 LATEX = pdflatex
