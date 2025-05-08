@@ -3,26 +3,26 @@ from ply.yacc import YaccProduction
 from pascal_analex import tokens, literals
 from pascal_exemplos import *
 
-def p_program(p):
+def p_program(p: YaccProduction):
     "program : PROGRAM ID ';' variables_declaration main_block '.'"
     print(f"Reconheci P1: {p.slice}")
 
-def p_variables_declaration(p):
+def p_variables_declaration(p: YaccProduction):
     """variables_declaration : VAR variables_list
                              |"""
     print(f"Reconheci P2: {p.slice}")
 
-def p_variables_list(p):
+def p_variables_list(p: YaccProduction):
     """variables_list : same_type_variables
-                      | same_type_variables variables_list"""
+                      | variables_list same_type_variables"""
     print(f"Reconheci P3: {p.slice}")
 
-def p_same_type_variables(p):
+def p_same_type_variables(p: YaccProduction):
     "same_type_variables : ID id_list ':' ID ';'"
     print(f"Reconheci P4: {p.slice}")
 
-def p_id_list(p):
-    """id_list : ',' ID id_list
+def p_id_list(p: YaccProduction):
+    """id_list : id_list ',' ID
                |"""
     print(f"Reconheci P5: {p.slice}")
 
@@ -31,7 +31,7 @@ def p_main_block(p: YaccProduction):
     print(f"Reconheci P6: {p.slice}")
 
 # Tratando erros de sintaxe
-def p_error(p):
+def p_error(p: YaccProduction):
     print(f"Erro sintático - {p}")
 
 parser = yacc.yacc()
