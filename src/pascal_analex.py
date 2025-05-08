@@ -295,10 +295,12 @@ def t_error(t):
     print("Illegal character ('%s',%s,%s)"% (t.value[0], t.lineno, t.lexpos))
     t.lexer.skip(1)
 
-def analex(text):
-    lexer = lex.lex()
-    lexer.input(text)
-    for tok in lexer:
-        print(tok)
+lexer = lex.lex()
 
-analex(exemplo7)
+# def analex(text):
+#     lexer = lex.lex()
+#     lexer.input(text)
+#     for tok in lexer:
+#         print(tok)
+
+# analex(exemplo7)

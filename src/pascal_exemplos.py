@@ -131,3 +131,12 @@ valor := BinToInt(bin);
 writeln('O valor inteiro correspondente é: ', valor);
 end.
 '''
+
+exemplo8 = '''
+program Maior3;
+var
+num1, num2, num3, maior: Integer;
+str1: String; 
+begin
+end.
+'''
