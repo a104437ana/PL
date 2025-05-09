@@ -138,5 +138,26 @@ var
     num1, num2, num3, maior: Integer;
     str1: String; 
 begin
+
+    num1 := 1;
+    num2 := 2;
+
+    if ( condicao ) then 
+        num3 := num1;
+    else if ( condicao ) then
+        num3 := 0;
+    else
+        num3 := num2;
+
+    for ( condicao ) do
+    begin
+        num3 := num1;
+    end;
+
+    while ( condicao ) do
+    begin
+        num3 := num2;
+    end;
+
 end.
 '''
