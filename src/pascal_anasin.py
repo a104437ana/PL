@@ -32,9 +32,9 @@ P23                    if : IF cond THEN algorithm
 P24                  else : ELSE algorithm
 P25                  loop : for
 P26                       | while
-P27                   for : FOR for_cond code_block ';'
+P27                   for : FOR for_cond DO code_block ';'
 P28              for_cond : '(' cond ')'
-P39                 while : WHILE cond code_block ';'
+P39                 while : WHILE cond DO code_block ';'
 P30            while_cond : '(' cond ')'
 P31                   exp : STRING
 P32                  cond : STRING
