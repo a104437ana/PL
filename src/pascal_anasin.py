@@ -41,7 +41,8 @@ P32                  cond : STRING
 """
 
 def p_program(p: YaccProduction):
-    "program : PROGRAM ID ';' variables_declaration code_block '.'"
+    """program : PROGRAM ID ';' variables_declaration code_block '.'
+               | code_block '.'"""
     print(f"Reconheci P1: {p.slice}")
 
 def p_variables_declaration(p: YaccProduction):
@@ -171,4 +172,4 @@ def p_error(p: YaccProduction):
 
 parser = yacc.yacc()
 
-r = parser.parse(exemplo8)
+r = parser.parse(exemplo0,debug=True)
