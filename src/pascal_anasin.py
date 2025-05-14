@@ -42,9 +42,34 @@ P32                  cond : STRING
 """
 
 def p_program(p: YaccProduction):
-    """program : PROGRAM ID ';' variables_declaration code_block '.'
+    """program : PROGRAM ID ';' functions variables_declaration code_block '.'
                | code_block '.'"""
     #print(f"Recognized P1: {p}")
+
+def p_functions(p):
+    """functions : functions function
+                 | function
+                 |"""
+    pass
+
+def p_function(p):
+    """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'"""
+    # Exemplo: FUNCTION soma(a: INTEGER; b: INTEGER): INTEGER; VAR ... BEGIN ... END;
+    pass
+
+def p_parameters(p):
+    """parameters : parameter_list
+                  |"""
+    pass
+
+def p_parameter_list(p):
+    """parameter_list : parameter_list ';' parameter
+                      | parameter"""
+    pass
+
+def p_parameter(p):
+    """parameter : ID ':' DATATYPE"""
+    pass
 
 def p_variables_declaration(p: YaccProduction):
     """variables_declaration : VAR variables_list
