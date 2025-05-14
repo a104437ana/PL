@@ -161,3 +161,15 @@ begin
 
 end.
 '''
+
+exemplos = {
+    "0": exemplo0,
+    "1": exemplo1,
+    "2": exemplo2,
+    "3": exemplo3,
+    "4": exemplo4,
+    "5": exemplo5,
+    "6": exemplo6,
+    "7": exemplo7,
+    "8": exemplo8,
+}

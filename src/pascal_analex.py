@@ -1,4 +1,5 @@
 import ply.lex as lex
+import sys
 from pascal_exemplos import *
 
 reserved = [
@@ -256,7 +257,7 @@ def t_STRING(t):
     r'\'[^\']+\'|\"[^\"]*\"'
     return t
 
-t_ignore_COMMENT = r"\{.*\}|\(\*.*\*\)"
+t_ignore_COMMENT = r"\{(.|\n)*?\}|\(\*(.|\n)*?\*\)"
 
 def t_newline(t):
     r'\n+'
@@ -270,12 +271,21 @@ def t_error(t):
 
 lexer = lex.lex()
 
-ola = '''
 def analex(text):
     lexer = lex.lex()
     lexer.input(text)
     for tok in lexer:
         print(tok)
 
-analex(exemplo4)
-'''
+if __name__ == "__main__":
+    texto = ""
+    if len(sys.argv) < 2:
+        texto = input()
+    else:
+        escolha = sys.argv[1]
+        if escolha in exemplos:
+            print(exemplos[escolha])
+            texto = exemplos[escolha]
+    if texto != "":
+        print("\033[1;31mLexical analysis:\033[0m")
+        analex(texto)
