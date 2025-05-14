@@ -155,7 +155,9 @@ def p_for(p: YaccProduction):
 def p_for_cond(p: YaccProduction):
     '''for_cond : cond 
                 | assignment TO ID
-                | assignment TO INT'''
+                | assignment TO INT
+                | assignment DOWNTO ID
+                | assignment DOWNTO INT'''
     #print(f"Recognized P28") # incompleto
 
 def p_while(p: YaccProduction):
