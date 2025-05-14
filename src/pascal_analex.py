@@ -1,5 +1,5 @@
-import ply.lex as lex
 import sys
+import ply.lex as lex
 from pascal_exemplos import *
 
 reserved = [
@@ -266,16 +266,12 @@ def t_newline(t):
 t_ignore = ' \t'
 
 def t_error(t):
-    print("Illegal character ('%s',%s,%s)"% (t.value[0], t.lineno, t.lexpos))
+    print("\033[1;31mIllegal character ('%s',%s,%s)\033[0m"% (t.value[0], t.lineno, t.lexpos))
+    t.lexer.has_errors = True
     t.lexer.skip(1)
 
 lexer = lex.lex()
-
-def analex(text):
-    lexer = lex.lex()
-    lexer.input(text)
-    for tok in lexer:
-        print(tok)
+lexer.has_errors = False
 
 if __name__ == "__main__":
     texto = ""
@@ -287,5 +283,11 @@ if __name__ == "__main__":
             print(exemplos[escolha])
             texto = exemplos[escolha]
     if texto != "":
-        print("\033[1;31mLexical analysis:\033[0m")
-        analex(texto)
+        print("\033[1;93mLexical analysis:\033[0m")
+        lexer.input(texto)
+        for tok in lexer:
+            print(tok)
+        if lexer.has_errors:
+            print("\033[1;31mLexical errors were found ❌\033[0m")
+        else:
+            print("\033[1;92mLexical analysis completed without errors ✅\033[0m")

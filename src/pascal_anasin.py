@@ -1,3 +1,4 @@
+import sys
 import ply.yacc as yacc
 from ply.yacc import YaccProduction
 from pascal_analex import tokens, literals
@@ -43,133 +44,204 @@ P32                  cond : STRING
 def p_program(p: YaccProduction):
     """program : PROGRAM ID ';' variables_declaration code_block '.'
                | code_block '.'"""
-    print(f"Reconheci P1: {p.slice}")
+    print(f"Recognized P1: {p}")
 
 def p_variables_declaration(p: YaccProduction):
     """variables_declaration : VAR variables_list
                              |"""
     if len(p) == 3:
-        print(f"Reconheci P2: {p.slice}")
+        print(f"Recognized P2")
     elif len(p) == 1:
-        print(f"Reconheci P3: {p.slice}")
+        print(f"Recognized P3")
 
 def p_variables_list(p: YaccProduction):
     """variables_list : same_type_variables
                       | variables_list same_type_variables"""
     if len(p) == 2:
-        print(f"Reconheci P4: {p.slice}")
+        print(f"Recognized P4")
     elif len(p) == 3:
-        print(f"Reconheci P5: {p.slice}")
+        print(f"Recognized P5")
 
 def p_same_type_variables(p: YaccProduction):
-    "same_type_variables : ID id_list ':' ID ';'"
-    print(f"Reconheci P6: {p.slice}")
+    "same_type_variables : ID id_list ':' DATATYPE ';'"
+    print(f"Recognized P6")
 
 def p_id_list(p: YaccProduction):
     """id_list : id_list ',' ID
                |"""
     if len(p) == 4:
-        print(f"Reconheci P7: {p.slice}")
+        print(f"Recognized P7")
     elif len(p) == 1:
-        print(f"Reconheci P8: {p.slice}")
+        print(f"Recognized P8")
 
 def p_code_block(p: YaccProduction):
     "code_block : BEGIN algorithm END"
-    print(f"Reconheci P9: {p.slice}")
+    print(f"Recognized P9")
 
 def p_algorithm(p: YaccProduction):
-    """algorithm : assignment algorithm
-                 | conditional algorithm
-                 | loop algorithm
-                 |"""
+    """algorithm : assignment ';' algorithm
+                 | assignment
+                 | if ';' algorithm
+                 | if
+                 | if_else ';' algorithm
+                 | if_else
+                 | func_call ';' algorithm
+                 | func_call
+                 | loop ';' algorithm
+                 | loop 
+                 | """
     if len(p) == 3:
-        if p.slice[1].type == "assignment":
-            print(f"Reconheci P10: {p.slice}")
-        elif p.slice[1].type == "conditional":
-            print(f"Reconheci P11: {p.slice}")
-        elif p.slice[1].type == "loop":
-            print(f"Reconheci P12: {p.slice}")
+        if p.stack[1].type == "assignment":
+            print(f"Recognized P10")
+        elif p.stack[1].type == "conditional":
+            print(f"Recognized P11")
+        elif p.stack[1].type == "loop":
+            print(f"Recognized P12")
     elif len(p) == 1:
-        print(f"Reconheci P13: {p.slice}")
+        print(f"Recognized P13")
 
 def p_assignment(p: YaccProduction):
-    "assignment : ID ASSIGNMENT assignment_value ';'"
-    print(f"Reconheci P14: {p.slice}")
+    "assignment : ID ASSIGNMENT assignment_value"
+    print(f"Recognized P14")
 
 def p_assignment_value(p: YaccProduction):
     """assignment_value : value
-                        | exp"""
-    if p.slice[1].type == "value":
-        print(f"Reconheci P15: {p.slice}")
-    elif p.slice[1].type == "exp":
-        print(f"Reconheci P16: {p.slice}")
+                        | expr"""
+    if p.stack[1].type == "value":
+        print(f"Recognized P15")
+    elif p.stack[1].type == "exp":
+        print(f"Recognized P16")
 
 def p_value(p: YaccProduction):
     """value : ID
              | INT
              | REAL
-             | STRING"""
-    if p.slice[1].type == "ID":
-        print(f"Reconheci P17: {p.slice}")
-    elif p.slice[1].type == "INT":
-        print(f"Reconheci P18: {p.slice}")
-    elif p.slice[1].type == "REAL":
-        print(f"Reconheci P19: {p.slice}")
-    elif p.slice[1].type == "STRING":
-        print(f"Reconheci P20: {p.slice}")
+             | STRING
+             | BOOL"""
+    if p.stack[1].type == "ID":
+        print(f"Recognized P17")
+    elif p.stack[1].type == "INT":
+        print(f"Recognized P18")
+    elif p.stack[1].type == "REAL":
+        print(f"Recognized P19")
+    elif p.stack[1].type == "STRING":
+        print(f"Recognized P20")
 
-def p_conditional(p: YaccProduction):
-    """conditional : if ELSE conditional
-                   | if else"""
-    if p.slice[2].type == "ELSE": # não funciona direito com "else if"
-        print(f"Reconheci P21: {p.slice}")
-    if p.slice[2].type == "else":
-        print(f"Reconheci P22: {p.slice}")
+def p_if_else(p):
+    '''if_else : IF cond THEN if_else ELSE if_else
+               | IF '(' cond ')' THEN if_else ELSE if_else
+               | assignment
+               | func_call'''
 
-def p_if(p: YaccProduction):
-    "if : IF '(' cond ')' THEN algorithm"
-    print(f"Reconheci P23: {p.slice}")
-
-def p_else(p: YaccProduction):
-    "else : ELSE algorithm"
-    print(f"Reconheci P24: {p.slice}")
+def p_if(p):
+    '''if : IF cond THEN if_else ELSE if 
+          | IF '(' cond ')' THEN if_else ELSE if
+          | IF cond THEN algorithm
+          | IF '(' cond ')' THEN algorithm'''
 
 def p_loop(p: YaccProduction):
     """loop : for
             | while"""
-    if p.slice[1].type == "for":
-        print(f"Reconheci P25: {p.slice}")
-    elif p.slice[1].type == "while":
-        print(f"Reconheci P26: {p.slice}")
+    if p.stack[1].type == "for":
+        print(f"Recognized P25")
+    elif p.stack[1].type == "while":
+        print(f"Recognized P26")
 
 def p_for(p: YaccProduction):
-    "for : FOR for_cond DO code_block ';'"
-    print(f"Reconheci P27: {p.slice}")
+    '''for : FOR for_cond DO code_block
+           | FOR for_cond DO algorithm'''
+    print(f"Recognized P27")
 
 def p_for_cond(p: YaccProduction):
-    "for_cond : '(' cond ')'"
-    print(f"Reconheci P28: {p.slice}") # incompleto
+    '''for_cond : '(' cond ')'
+                | assignment TO ID'''
+    print(f"Recognized P28") # incompleto
 
 def p_while(p: YaccProduction):
-    "while : WHILE while_cond DO code_block ';'"
-    print(f"Reconheci P29: {p.slice}")
+    "while : WHILE while_cond DO code_block"
+    print(f"Recognized P29")
 
 def p_while_cond(p: YaccProduction):
     "while_cond : '(' cond ')'"
-    print(f"Reconheci P30: {p.slice}") # incompleto
-
-def p_exp(p: YaccProduction):
-    "exp : ID"
-    print(f"Reconheci P31: {p.slice}") # incompleto
+    print(f"Recognized P30") # incompleto
 
 def p_cond(p: YaccProduction):
-    "cond : ID"
-    print(f"Reconheci P32: {p.slice}") # incompleto
+    '''cond : expr
+            | expr op_rel expr
+            | '(' expr ')'
+            | '(' expr op_rel expr ')' '''
+
+def p_op_rel(p: YaccProduction):
+    '''op_rel : '='
+              | NOT_EQUAL
+              | '<'
+              | LESS_EQUAL
+              | '>'
+              | GREATER_EQUAL'''
+
+def p_expr(p: YaccProduction):
+    '''expr : termo
+            | expr op_ad termo
+            | '(' termo ')'
+            | '(' expr op_ad termo ')' '''
+
+def p_termo(p: YaccProduction):
+    '''termo : fator
+             | termo op_mul fator
+             | '(' fator ')'
+             | '(' termo op_mul fator ')' '''
+
+def p_op_ad(p: YaccProduction):
+    '''op_ad : '+'
+             | '-'
+             | OR'''
+
+def p_op_mul(p: YaccProduction):
+    '''op_mul : '*'
+             | '/'
+             | AND
+             | MOD
+             | DIV'''
+
+def p_fator(p: YaccProduction):
+    '''fator : value
+             | func_call'''
+
+def p_func_call(p: YaccProduction):
+    "func_call : ID '(' args ')'"
+
+def p_args(p: YaccProduction):
+    '''args : elems
+            |'''
+
+def p_elems(p: YaccProduction):
+    '''elems : elems ',' value
+             | value'''
 
 # Tratando erros de sintaxe
 def p_error(p: YaccProduction):
-    print(f"Erro sintático - {p}")
+    if p:
+        print(f"\033[1;31mSyntax error {p}\033[0m")
+    else:
+        print(f"\033[1;31mSyntax error at EOF\033[0m")
+    parser.has_errors = True
 
 parser = yacc.yacc()
+parser.has_errors = False
 
-r = parser.parse(exemplo0,debug=True)
+if __name__ == "__main__":
+    texto = ""
+    if len(sys.argv) < 2:
+        texto = input()
+    else:
+        escolha = sys.argv[1]
+        if escolha in exemplos:
+            print(exemplos[escolha])
+            texto = exemplos[escolha]
+    if texto != "":
+        print("\033[1;93mSyntax analysis:\033[0m")
+        r = parser.parse(texto,debug=True)
+        if parser.has_errors:
+            print("\033[1;31mSyntax errors were found ❌\033[0m")
+        else:
+            print("\033[1;92mSyntax analysis completed without errors ✅\033[0m")
