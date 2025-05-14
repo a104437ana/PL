@@ -156,13 +156,12 @@ def p_value(p: YaccProduction):
         #print(f"Recognized P20")
 
 def p_if_else(p):
-    '''if_else : IF cond THEN if_else ELSE if_else
+    '''if_else : IF cond THEN algorithm ELSE algorithm
                | assignment
                | func_call'''
 
 def p_if(p):
-    '''if : IF cond THEN if_else ELSE if 
-          | IF cond THEN algorithm'''
+    '''if : IF cond THEN algorithm'''
 
 def p_loop(p: YaccProduction):
     """loop : for
