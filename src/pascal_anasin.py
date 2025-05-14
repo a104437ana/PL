@@ -63,7 +63,8 @@ def p_variables_list(p: YaccProduction):
         #print(f"Recognized P5")
 
 def p_same_type_variables(p: YaccProduction):
-    "same_type_variables : ID id_list ':' DATATYPE ';'"
+    """same_type_variables : ID id_list ':' DATATYPE ';'
+                           | ID id_list ':' ARRAY '[' INT RANGE INT ']' OF DATATYPE ';' """
     #print(f"Recognized P6")
 
 def p_id_list(p: YaccProduction):
@@ -117,7 +118,9 @@ def p_value(p: YaccProduction):
              | INT
              | REAL
              | STRING
-             | BOOL"""
+             | BOOL
+             | ID '[' INT ']' 
+             | ID '[' ID ']'"""
     #if p.stack[1].type == "ID":
         #print(f"Recognized P17")
     #elif p.stack[1].type == "INT":
@@ -151,7 +154,8 @@ def p_for(p: YaccProduction):
 
 def p_for_cond(p: YaccProduction):
     '''for_cond : cond 
-                | assignment TO ID'''
+                | assignment TO ID
+                | assignment TO INT'''
     #print(f"Recognized P28") # incompleto
 
 def p_while(p: YaccProduction):
