@@ -44,39 +44,39 @@ P32                  cond : STRING
 def p_program(p: YaccProduction):
     """program : PROGRAM ID ';' variables_declaration code_block '.'
                | code_block '.'"""
-    print(f"Recognized P1: {p}")
+    #print(f"Recognized P1: {p}")
 
 def p_variables_declaration(p: YaccProduction):
     """variables_declaration : VAR variables_list
                              |"""
-    if len(p) == 3:
-        print(f"Recognized P2")
-    elif len(p) == 1:
-        print(f"Recognized P3")
+    #if len(p) == 3:
+        #print(f"Recognized P2")
+    #elif len(p) == 1:
+        #print(f"Recognized P3")
 
 def p_variables_list(p: YaccProduction):
     """variables_list : same_type_variables
                       | variables_list same_type_variables"""
-    if len(p) == 2:
-        print(f"Recognized P4")
-    elif len(p) == 3:
-        print(f"Recognized P5")
+    #if len(p) == 2:
+        #print(f"Recognized P4")
+    #elif len(p) == 3:
+        #print(f"Recognized P5")
 
 def p_same_type_variables(p: YaccProduction):
     "same_type_variables : ID id_list ':' DATATYPE ';'"
-    print(f"Recognized P6")
+    #print(f"Recognized P6")
 
 def p_id_list(p: YaccProduction):
     """id_list : id_list ',' ID
                |"""
-    if len(p) == 4:
-        print(f"Recognized P7")
-    elif len(p) == 1:
-        print(f"Recognized P8")
+    #if len(p) == 4:
+        #print(f"Recognized P7")
+    #elif len(p) == 1:
+        #print(f"Recognized P8")
 
 def p_code_block(p: YaccProduction):
     "code_block : BEGIN algorithm END"
-    print(f"Recognized P9")
+    #print(f"Recognized P9")
 
 def p_algorithm(p: YaccProduction):
     """algorithm : assignment ';' algorithm
@@ -90,27 +90,27 @@ def p_algorithm(p: YaccProduction):
                  | loop ';' algorithm
                  | loop 
                  | """
-    if len(p) == 3:
-        if p.stack[1].type == "assignment":
-            print(f"Recognized P10")
-        elif p.stack[1].type == "conditional":
-            print(f"Recognized P11")
-        elif p.stack[1].type == "loop":
-            print(f"Recognized P12")
-    elif len(p) == 1:
-        print(f"Recognized P13")
+    #if len(p) == 3:
+        #if p.stack[1].type == "assignment":
+            #print(f"Recognized P10")
+        #elif p.stack[1].type == "conditional":
+            #print(f"Recognized P11")
+        #elif p.stack[1].type == "loop":
+            #print(f"Recognized P12")
+    #elif len(p) == 1:
+        #print(f"Recognized P13")
 
 def p_assignment(p: YaccProduction):
     "assignment : ID ASSIGNMENT assignment_value"
-    print(f"Recognized P14")
+    #print(f"Recognized P14")
 
 def p_assignment_value(p: YaccProduction):
     """assignment_value : value
                         | expr"""
-    if p.stack[1].type == "value":
-        print(f"Recognized P15")
-    elif p.stack[1].type == "exp":
-        print(f"Recognized P16")
+    #if p.stack[1].type == "value":
+        #print(f"Recognized P15")
+    #elif p.stack[1].type == "exp":
+        #print(f"Recognized P16")
 
 def p_value(p: YaccProduction):
     """value : ID
@@ -118,14 +118,14 @@ def p_value(p: YaccProduction):
              | REAL
              | STRING
              | BOOL"""
-    if p.stack[1].type == "ID":
-        print(f"Recognized P17")
-    elif p.stack[1].type == "INT":
-        print(f"Recognized P18")
-    elif p.stack[1].type == "REAL":
-        print(f"Recognized P19")
-    elif p.stack[1].type == "STRING":
-        print(f"Recognized P20")
+    #if p.stack[1].type == "ID":
+        #print(f"Recognized P17")
+    #elif p.stack[1].type == "INT":
+        #print(f"Recognized P18")
+    #elif p.stack[1].type == "REAL":
+        #print(f"Recognized P19")
+    #elif p.stack[1].type == "STRING":
+        #print(f"Recognized P20")
 
 def p_if_else(p):
     '''if_else : IF cond THEN if_else ELSE if_else
@@ -142,28 +142,28 @@ def p_if(p):
 def p_loop(p: YaccProduction):
     """loop : for
             | while"""
-    if p.stack[1].type == "for":
-        print(f"Recognized P25")
-    elif p.stack[1].type == "while":
-        print(f"Recognized P26")
+    #if p.stack[1].type == "for":
+        #print(f"Recognized P25")
+    #elif p.stack[1].type == "while":
+        #print(f"Recognized P26")
 
 def p_for(p: YaccProduction):
     '''for : FOR for_cond DO code_block
            | FOR for_cond DO algorithm'''
-    print(f"Recognized P27")
+    #print(f"Recognized P27")
 
 def p_for_cond(p: YaccProduction):
     '''for_cond : '(' cond ')'
                 | assignment TO ID'''
-    print(f"Recognized P28") # incompleto
+    #print(f"Recognized P28") # incompleto
 
 def p_while(p: YaccProduction):
     "while : WHILE while_cond DO code_block"
-    print(f"Recognized P29")
+    #print(f"Recognized P29")
 
 def p_while_cond(p: YaccProduction):
     "while_cond : '(' cond ')'"
-    print(f"Recognized P30") # incompleto
+    #print(f"Recognized P30") # incompleto
 
 def p_cond(p: YaccProduction):
     '''cond : expr
