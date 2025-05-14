@@ -129,15 +129,12 @@ def p_value(p: YaccProduction):
 
 def p_if_else(p):
     '''if_else : IF cond THEN if_else ELSE if_else
-               | IF '(' cond ')' THEN if_else ELSE if_else
                | assignment
                | func_call'''
 
 def p_if(p):
     '''if : IF cond THEN if_else ELSE if 
-          | IF '(' cond ')' THEN if_else ELSE if
-          | IF cond THEN algorithm
-          | IF '(' cond ')' THEN algorithm'''
+          | IF cond THEN algorithm'''
 
 def p_loop(p: YaccProduction):
     """loop : for
@@ -153,23 +150,22 @@ def p_for(p: YaccProduction):
     #print(f"Recognized P27")
 
 def p_for_cond(p: YaccProduction):
-    '''for_cond : '(' cond ')'
+    '''for_cond : cond 
                 | assignment TO ID'''
     #print(f"Recognized P28") # incompleto
 
 def p_while(p: YaccProduction):
-    "while : WHILE while_cond DO code_block"
+    '''while : WHILE while_cond DO code_block
+             | WHILE while_cond DO algorithm'''
     #print(f"Recognized P29")
 
 def p_while_cond(p: YaccProduction):
-    "while_cond : '(' cond ')'"
+    '''while_cond : cond'''
     #print(f"Recognized P30") # incompleto
 
 def p_cond(p: YaccProduction):
     '''cond : expr
-            | expr op_rel expr
-            | '(' expr ')'
-            | '(' expr op_rel expr ')' '''
+            | expr op_rel expr'''
 
 def p_op_rel(p: YaccProduction):
     '''op_rel : '='
@@ -181,15 +177,11 @@ def p_op_rel(p: YaccProduction):
 
 def p_expr(p: YaccProduction):
     '''expr : termo
-            | expr op_ad termo
-            | '(' termo ')'
-            | '(' expr op_ad termo ')' '''
+            | expr op_ad termo'''
 
 def p_termo(p: YaccProduction):
     '''termo : fator
-             | termo op_mul fator
-             | '(' fator ')'
-             | '(' termo op_mul fator ')' '''
+             | termo op_mul fator '''
 
 def p_op_ad(p: YaccProduction):
     '''op_ad : '+'
@@ -205,7 +197,8 @@ def p_op_mul(p: YaccProduction):
 
 def p_fator(p: YaccProduction):
     '''fator : value
-             | func_call'''
+             | func_call
+             | '(' cond ')' '''
 
 def p_func_call(p: YaccProduction):
     "func_call : ID '(' args ')'"
