@@ -4,6 +4,11 @@ from ply.yacc import YaccProduction
 from pascal_analex import tokens, literals
 from pascal_exemplos import *
 
+precedence = (
+    ('nonassoc', 'IFX'),
+    ('nonassoc', 'ELSE'),
+)
+
 def p_program(p: YaccProduction):
     """program : PROGRAM ID ';' declarations code_block '.'
                | declarations code_block '.'"""
@@ -21,26 +26,6 @@ def p_declaration(p):
                    | function
                    | procedure"""
 
-def p_function(p):
-    """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'"""
-
-def p_procedure(p):
-    """procedure : PROCEDURE ID '(' parameters ')' ';' variables_declaration code_block ';'"""
-
-def p_parameters(p):
-    """parameters : parameter_list
-                  |"""
-    pass
-
-def p_parameter_list(p):
-    """parameter_list : parameter_list ';' parameter
-                      | parameter"""
-    pass
-
-def p_parameter(p):
-    """parameter : ID ':' DATATYPE"""
-    pass
-
 def p_variables_declaration(p: YaccProduction):
     """variables_declaration : VAR variables_list"""
 
@@ -56,24 +41,42 @@ def p_id_list(p: YaccProduction):
     """id_list : id_list ',' ID
                |"""
 
+def p_function(p):
+    """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'"""
+
+def p_procedure(p):
+    """procedure : PROCEDURE ID '(' parameters ')' ';' variables_declaration code_block ';'"""
+
+def p_parameters(p):
+    """parameters : parameter_list
+                  |"""
+
+def p_parameter_list(p):
+    """parameter_list : parameter_list ';' parameter
+                      | parameter"""
+
+def p_parameter(p):
+    """parameter : ID ':' DATATYPE"""
+
 def p_code_block(p: YaccProduction):
-    "code_block : BEGIN algorithm END"
+    """code_block : BEGIN alg END"""
+
+def p_alg(p):
+    """alg : algorithm
+           | algorithm ';'
+           | ';'
+           |"""
 
 def p_algorithm(p):
-    """algorithm : algorithm statement
-                 |"""
+    """algorithm : algorithm ';' statement
+                 | statement"""
 
 def p_statement(p):
-    """statement : assignment ';'
-                 | assignment
-                 | if
-                 | if ';'
+    """statement : assignment
+                 | if 
                  | if_else
-                 | if_else ';'
                  | func_call
-                 | func_call ';'
-                 | loop
-                 | loop ';' """
+                 | loop """
 
 def p_assignment(p: YaccProduction):
     """assignment : ID ASSIGNMENT assignment_value"""
@@ -91,17 +94,21 @@ def p_value(p: YaccProduction):
              | ID '[' ID ']'"""
 
 def p_if_else(p):
-    """if_else : IF cond THEN algorithm ELSE algorithm"""
+    """if_else : IF cond THEN code_block ELSE code_block
+               | IF cond THEN code_block ELSE statement
+               | IF cond THEN statement ELSE code_block
+               | IF cond THEN statement ELSE statement """
 
 def p_if(p):
-    """if : IF cond THEN algorithm"""
+    """if : IF cond THEN code_block %prec IFX
+          | IF cond THEN statement %prec IFX"""
 
 def p_loop(p: YaccProduction):
     """loop : for
             | while"""
 
 def p_for(p: YaccProduction):
-    """for : FOR for_cond DO code_block
+    """for : FOR for_cond DO code_block 
            | FOR for_cond DO statement"""
 
 def p_for_cond(p: YaccProduction):

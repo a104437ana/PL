@@ -147,9 +147,9 @@ begin
     num2 := 2;
 
     if ( condicao ) then 
-        num3 := num1;
+        num3 := num1
     else if ( condicao ) then
-        num3 := 0;
+        num3 := 0
     else
         num3 := num2;
 
