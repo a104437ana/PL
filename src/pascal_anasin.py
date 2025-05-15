@@ -4,136 +4,21 @@ from ply.yacc import YaccProduction
 from pascal_analex import tokens, literals
 from pascal_exemplos import *
 
-"""
-program : PROGRAM ID ';' functions variables_declaration code_block '.'
-        | code_block '.'
-
-functions : functions function
-                 | function
-                 |
-
-function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'
-
-parameters : parameter_list
-            |
-
-parameter_list : parameter_list ';' parameter
-                | parameter
-
-parameter : ID ':' DATATYPE
-
-variables_declaration : VAR variables_list
-                        |
-
-variables_list : same_type_variables
-| variables_list same_type_variables
-
-same_type_variables : ID id_list ':' DATATYPE ';'
-| ID id_list ':' ARRAY '[' INT RANGE INT ']' OF DATATYPE ';' 
-
-id_list : id_list ',' ID
-|
-
-algorithm : assignment ';' algorithm
-                 | assignment
-                 | if ';' algorithm
-                 | if
-                 | if_else ';' algorithm
-                 | if_else
-                 | func_call ';' algorithm
-                 | func_call
-                 | loop ';' algorithm
-                 | loop
-| 
-
-assignment : ID ASSIGNMENT assignment_value
-
-assignment_value : value
-| expr
-
-value : ID
-             | INT
-             | REAL
-             | STRING
-             | BOOL
-             | ID '[' INT ']'
-| ID '[' ID ']'
-
-if_else : IF cond THEN algorithm ELSE algorithm
-               | assignment
-| func_call
-
-if : IF cond THEN algorithm
-
-loop : for
-| while
-
-for : FOR for_cond DO code_block
-| FOR for_cond DO algorithm
-
-for_cond : cond
-                | assignment TO ID
-                | assignment TO INT
-                | assignment DOWNTO ID
-| assignment DOWNTO INT
-
-while : WHILE while_cond DO code_block
-| WHILE while_cond DO algorithm
-
-while_cond : cond
-
-cond : expr
-| expr op_rel expr
-
-op_rel : '='
-              | NOT_EQUAL
-              | '<'
-              | LESS_EQUAL
-              | '>'
-| GREATER_EQUAL
-
-expr : termo
-| expr op_ad termo
-
-termo : fator
-| termo op_mul fator 
-
-op_ad : '+'
-             | '-'
-| OR
-
-op_mul : '*'
-             | '/'
-             | AND
-             | MOD
-| DIV
-
-fator : value
-             | func_call
-| '(' cond ')' 
-
-func_call : ID '(' args ')'
-
-args : elems
-|
-
-elems : elems ',' value
-| value
-"""
-
 def p_program(p: YaccProduction):
-    """program : PROGRAM ID ';' functions variables_declaration code_block '.'
-               | code_block '.'"""
+    """program : PROGRAM ID ';' declarations code_block '.'
+               | declarations code_block '.'"""
 
-def p_functions(p):
-    """functions : functions function
-                 | function
-                 |"""
-    pass
+def p_declarations(p: YaccProduction):
+    """declarations : declarations variables_declaration
+                    | declarations function
+                    | declarations procedure
+                    |"""
 
 def p_function(p):
     """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'"""
-    pass
+
+def p_procedure(p):
+    """procedure : PROCEDURE ID '(' parameters ')' ';' variables_declaration code_block ';'"""
 
 def p_parameters(p):
     """parameters : parameter_list
@@ -185,8 +70,7 @@ def p_assignment(p: YaccProduction):
     """assignment : ID ASSIGNMENT assignment_value"""
 
 def p_assignment_value(p: YaccProduction):
-    """assignment_value : value
-                        | expr"""
+    """assignment_value : expr"""
 
 def p_value(p: YaccProduction):
     """value : ID
@@ -198,9 +82,7 @@ def p_value(p: YaccProduction):
              | ID '[' ID ']'"""
 
 def p_if_else(p):
-    """if_else : IF cond THEN algorithm ELSE algorithm
-               | assignment
-               | func_call"""
+    """if_else : IF cond THEN algorithm ELSE algorithm"""
 
 def p_if(p):
     """if : IF cond THEN algorithm"""
@@ -262,7 +144,8 @@ def p_op_mul(p: YaccProduction):
 def p_fator(p: YaccProduction):
     """fator : value
              | func_call
-             | '(' cond ')' """
+             | '(' cond ')'
+             | NOT fator"""
 
 def p_func_call(p: YaccProduction):
     """func_call : ID '(' args ')'"""

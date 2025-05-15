@@ -1,4 +1,8 @@
-exemplo0 = '''begin end.'''
+exemplo0 = '''
+program HelloWorld;
+begin
+end.
+'''
 
 exemplo1 = '''
 program HelloWorld;
