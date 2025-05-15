@@ -34,18 +34,22 @@ def p_variables_list(p: YaccProduction):
                       | variables_list same_type_variables"""
 
 def p_same_type_variables(p: YaccProduction):
-    """same_type_variables : ID id_list ':' DATATYPE ';'
-                           | ID id_list ':' ARRAY '[' INT RANGE INT ']' OF DATATYPE ';' """
+    """same_type_variables : id_list ':' DATATYPE ';'
+                           | id_list ':' ARRAY '[' INT RANGE INT ']' OF DATATYPE ';' """
 
 def p_id_list(p: YaccProduction):
     """id_list : id_list ',' ID
-               |"""
+               | ID"""
+
+def p_var_or_not(p):
+    """var_or_not : variables_declaration
+                  |"""
 
 def p_function(p):
-    """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'"""
+    """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' var_or_not code_block ';'"""
 
 def p_procedure(p):
-    """procedure : PROCEDURE ID '(' parameters ')' ';' variables_declaration code_block ';'"""
+    """procedure : PROCEDURE ID '(' parameters ')' ';' var_or_not code_block ';'"""
 
 def p_parameters(p):
     """parameters : parameter_list
@@ -56,16 +60,18 @@ def p_parameter_list(p):
                       | parameter"""
 
 def p_parameter(p):
-    """parameter : ID ':' DATATYPE"""
+    """
+    parameter : VAR_opt id_list ':' DATATYPE
+    """
+
+def p_VAR_opt(p):
+    """
+    VAR_opt : VAR
+            |
+    """
 
 def p_code_block(p: YaccProduction):
-    """code_block : BEGIN alg END"""
-
-def p_alg(p):
-    """alg : algorithm
-           | algorithm ';'
-           | ';'
-           |"""
+    """code_block : BEGIN algorithm END"""
 
 def p_algorithm(p):
     """algorithm : algorithm ';' statement
@@ -76,7 +82,8 @@ def p_statement(p):
                  | if 
                  | if_else
                  | func_call
-                 | loop """
+                 | loop
+                 |"""
 
 def p_assignment(p: YaccProduction):
     """assignment : ID ASSIGNMENT assignment_value"""
@@ -91,39 +98,34 @@ def p_value(p: YaccProduction):
              | STRING
              | BOOL
              | ID '[' INT ']' 
-             | ID '[' ID ']'"""
+             | ID '[' ID ']'
+             | func_call"""
+
+def p_statement_or_code_block (p):
+    """statement_or_code_block : code_block
+                               | statement"""
 
 def p_if_else(p):
-    """if_else : IF cond THEN code_block ELSE code_block
-               | IF cond THEN code_block ELSE statement
-               | IF cond THEN statement ELSE code_block
-               | IF cond THEN statement ELSE statement """
+    """if_else : IF cond THEN statement_or_code_block ELSE statement_or_code_block"""
 
 def p_if(p):
-    """if : IF cond THEN code_block %prec IFX
-          | IF cond THEN statement %prec IFX"""
+    """if : IF cond THEN statement_or_code_block %prec IFX"""
 
 def p_loop(p: YaccProduction):
     """loop : for
             | while"""
 
 def p_for(p: YaccProduction):
-    """for : FOR for_cond DO code_block 
-           | FOR for_cond DO statement"""
+    """for : FOR for_cond DO statement_or_code_block"""
 
 def p_for_cond(p: YaccProduction):
-    """for_cond : cond 
-                | assignment TO ID
+    """for_cond : assignment TO ID
                 | assignment TO INT
                 | assignment DOWNTO ID
                 | assignment DOWNTO INT"""
 
 def p_while(p: YaccProduction):
-    """while : WHILE while_cond DO code_block
-             | WHILE while_cond DO statement"""
-
-def p_while_cond(p: YaccProduction):
-    """while_cond : cond"""
+    """while : WHILE cond DO statement_or_code_block"""
 
 def p_cond(p: YaccProduction):
     """cond : expr
@@ -159,7 +161,6 @@ def p_op_mul(p: YaccProduction):
 
 def p_fator(p: YaccProduction):
     """fator : value
-             | func_call
              | '(' cond ')'
              | NOT fator"""
 

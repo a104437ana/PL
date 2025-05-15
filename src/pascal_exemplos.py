@@ -1,6 +1,57 @@
 exemplo0 = '''
-program HelloWorld;
+program TesteCompleto;
+
+var
+  i, n, soma: integer;
+
+procedure ImprimeLinha();
 begin
+  writeln('------------------------');
+end;
+
+function Fatorial(x: integer): integer;
+var
+  resultado, j: integer;
+begin
+  resultado := 1;
+  for j := 1 to x do
+    resultado := resultado * j;
+  Fatorial := resultado;
+end;
+
+begin
+  writeln('Programa Teste Completo Pascal');
+  ImprimeLinha();
+
+  writeln('Digite um número inteiro positivo:');
+  readln(n);
+
+  if n < 0 then
+  begin
+    writeln('Número inválido!');
+  end
+  else
+  begin
+    soma := 0;
+    i := 0;
+    while i <= n do
+    begin
+      soma := soma + i;
+      i := i + 1;
+    end;
+
+    writeln('Soma dos números de 0 até ', n, ' é: ', soma);
+
+    writeln('Fatorial de ', n, ' é: ', Fatorial(n));
+
+    writeln('Contagem regressiva de 10 até 1:');
+    for i := 10 downto 1 do
+      writeln(i);
+
+  end;
+
+  ImprimeLinha();
+  writeln('Fim do programa.');
 end.
 '''
 
@@ -137,33 +188,94 @@ end.
 '''
 
 exemplo8 = '''
-program Maior3;
+program TesteGramatica;
+
 var
-    num1, num2, num3, maior: Integer;
-    str1: String; 
+  x, y, z: integer;
+
+procedure MostrarValor(v: integer);
 begin
+  writeln('Valor: ', v);
+end;
 
-    num1 := 1;
-    num2 := 2;
+function Somar(a, b: integer): integer;
+begin
+  Somar := a + b;
+end;
 
-    if ( condicao ) then 
-        num3 := num1
-    else if ( condicao ) then
-        num3 := 0
-    else
-        num3 := num2;
+begin
+  x := 10;
+  y := 20;
 
-    for ( condicao ) do
-    begin
-        num3 := num1;
-    end;
+  if x < y then
+    MostrarValor(x)
+  else
+    MostrarValor(y);
 
-    while ( condicao ) do
-    begin
-        num3 := num2;
-    end;
+  z := 0;
+  for x := 1 to 5 do
+  begin
+    z := Somar(z, x);
+    writeln('z agora é: ', z);
+  end;
+
+  while z > 0 do
+  begin
+    writeln('Decrementando z: ', z);
+    z := z - 1;
+  end;
 
 end.
+
+'''
+
+exemplo9 = '''
+program TesteCompletoParametros;
+
+var
+  a, b, resultado: integer;
+  arr: array[1..5] of integer;
+
+procedure Incrementa(var x: integer);
+begin
+  x := x + 1;
+end;
+
+function SomaArray(v: array of integer; tamanho: integer): integer;
+var
+  i, s: integer;
+begin
+  s := 0;
+  for i := 0 to tamanho - 1 do
+    s := s + v[i];
+  SomaArray := s;
+end;
+
+begin
+  a := 10;
+  b := 20;
+
+  Incrementa(a);
+  writeln('a depois do incremento: ', a);
+
+  resultado := SomaArray(arr, 5);
+  writeln('Soma do array: ', resultado);
+
+  if resultado > 0 then
+    writeln('Soma positiva')
+  else
+    writeln('Soma zero ou negativa');
+
+  for a := 1 to 5 do
+    writeln('Iteração: ', a);
+
+  while b > 0 do
+  begin
+    writeln('Decrementando b: ', b);
+    b := b - 1;
+  end;
+end.
+
 '''
 
 exemplos = {
@@ -176,4 +288,5 @@ exemplos = {
     "6": exemplo6,
     "7": exemplo7,
     "8": exemplo8,
+    "9": exemplo9,
 }
