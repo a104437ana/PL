@@ -8,11 +8,18 @@ def p_program(p: YaccProduction):
     """program : PROGRAM ID ';' declarations code_block '.'
                | declarations code_block '.'"""
 
-def p_declarations(p: YaccProduction):
-    """declarations : declarations variables_declaration
-                    | declarations function
-                    | declarations procedure
+def p_declarations(p):
+    """declarations : declaration_list
                     |"""
+
+def p_declaration_list(p):
+    """declaration_list : declaration declaration_list
+                        | declaration"""
+
+def p_declaration(p):
+    """declaration : variables_declaration
+                   | function
+                   | procedure"""
 
 def p_function(p):
     """function : FUNCTION ID '(' parameters ')' ':' DATATYPE ';' variables_declaration code_block ';'"""
@@ -35,8 +42,7 @@ def p_parameter(p):
     pass
 
 def p_variables_declaration(p: YaccProduction):
-    """variables_declaration : VAR variables_list
-                             |"""
+    """variables_declaration : VAR variables_list"""
 
 def p_variables_list(p: YaccProduction):
     """variables_list : same_type_variables
@@ -53,18 +59,21 @@ def p_id_list(p: YaccProduction):
 def p_code_block(p: YaccProduction):
     "code_block : BEGIN algorithm END"
 
-def p_algorithm(p: YaccProduction):
-    """algorithm : assignment ';' algorithm
+def p_algorithm(p):
+    """algorithm : algorithm statement
+                 |"""
+
+def p_statement(p):
+    """statement : assignment ';'
                  | assignment
-                 | if ';' algorithm
                  | if
-                 | if_else ';' algorithm
+                 | if ';'
                  | if_else
-                 | func_call ';' algorithm
+                 | if_else ';'
                  | func_call
-                 | loop ';' algorithm
-                 | loop 
-                 | """
+                 | func_call ';'
+                 | loop
+                 | loop ';' """
 
 def p_assignment(p: YaccProduction):
     """assignment : ID ASSIGNMENT assignment_value"""
@@ -93,7 +102,7 @@ def p_loop(p: YaccProduction):
 
 def p_for(p: YaccProduction):
     """for : FOR for_cond DO code_block
-           | FOR for_cond DO algorithm"""
+           | FOR for_cond DO statement"""
 
 def p_for_cond(p: YaccProduction):
     """for_cond : cond 
@@ -104,7 +113,7 @@ def p_for_cond(p: YaccProduction):
 
 def p_while(p: YaccProduction):
     """while : WHILE while_cond DO code_block
-             | WHILE while_cond DO algorithm"""
+             | WHILE while_cond DO statement"""
 
 def p_while_cond(p: YaccProduction):
     """while_cond : cond"""
@@ -165,7 +174,7 @@ def p_error(p: YaccProduction):
         print(f"\033[1;31mSyntax error at EOF\033[0m")
     parser.has_errors = True
 
-parser = yacc.yacc()
+parser = yacc.yacc(debug=True, write_tables=True, outputdir='.')
 parser.has_errors = False
 
 if __name__ == "__main__":
