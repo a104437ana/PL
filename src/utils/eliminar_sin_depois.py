@@ -4,11 +4,6 @@ from ply.yacc import YaccProduction
 from pascal_analex import tokens, literals
 from pascal_exemplos import *
 
-precedence = (
-    ('nonassoc', 'IFX'),
-    ('nonassoc', 'ELSE'),
-)
-
 def p_program(p: YaccProduction):
     """program : PROGRAM ID ';' declarations code_block '.'
                | declarations code_block '.'"""
@@ -78,19 +73,26 @@ def p_algorithm(p):
                  | statement"""
 
 def p_statement(p):
-    """statement : assignment
+    """statement : open_statement
+                 | closed_statement"""
+
+def p_open_statement(p):
+    """open_statement : IF cond THEN sta"""
+
+def p_sta(p):
+    """sta : statement
+           | closed_statement ELSE open_statement"""
+    
+def p_closed_statement(p):
+    """closed_statement : simple_statement
+                        | IF cond THEN closed_statement ELSE closed_statement"""
+
+def p_simple_statement(p):
+    """simple_statement : assignment
                  | func_call
                  | loop
                  | code_block
-                 | if
-                 | else
                  |"""
-
-def p_if(p):
-    """if : IF cond THEN statement %prec IFX"""
-
-def p_else(p):
-    """else : IF cond THEN statement ELSE statement"""
 
 def p_assignment(p: YaccProduction):
     """assignment : ID ASSIGNMENT assignment_value"""

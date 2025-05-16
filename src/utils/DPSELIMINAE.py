@@ -125,8 +125,8 @@ def p_while(p: YaccProduction):
     """while : WHILE cond DO statement"""
 
 def p_cond(p: YaccProduction):
-    """cond : expr
-            | expr op_rel expr"""
+    """cond : expr op_rel expr
+            | bool"""
 
 def p_op_rel(p: YaccProduction):
     """op_rel : '='
@@ -135,6 +135,23 @@ def p_op_rel(p: YaccProduction):
               | LESS_EQUAL
               | '>'
               | GREATER_EQUAL"""
+
+def p_bool(p):
+    """bool : btermo
+            | bool op_or btermo"""
+
+def p_btermo(p):
+    """btermo : bfator
+              | btermo op_and bfator"""
+
+def p_bfator(p):
+    """bfator : BOOL
+              | ID
+              | ID '[' INT ']' 
+              | ID '[' ID ']'
+              | func_call
+              | '(' cond ')'
+              | NOT bfator"""
 
 def p_expr(p: YaccProduction):
     """expr : termo
@@ -146,20 +163,28 @@ def p_termo(p: YaccProduction):
 
 def p_op_ad(p: YaccProduction):
     """op_ad : '+'
-             | '-'
-             | OR"""
+             | '-'"""
+
+def p_op_or(p):
+    """op_or : OR"""
 
 def p_op_mul(p: YaccProduction):
     """op_mul : '*'
              | '/'
-             | AND
              | MOD
              | DIV"""
 
+def p_op_and(p):
+    "op_and : AND"
+
 def p_fator(p: YaccProduction):
-    """fator : value
-             | '(' cond ')'
-             | NOT fator"""
+    """fator : INT
+             | REAL
+             | ID
+             | ID '[' INT ']' 
+             | ID '[' ID ']'
+             | func_call
+             | '(' expr ')'"""
 
 def p_func_call(p: YaccProduction):
     """func_call : ID '(' args ')'"""
