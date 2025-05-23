@@ -14,12 +14,8 @@ def p_program(p: YaccProduction):
                | declarations code_block '.'"""
 
 def p_declarations(p):
-    """declarations : declaration_list
+    """declarations : declarations declaration
                     |"""
-
-def p_declaration_list(p):
-    """declaration_list : declaration declaration_list
-                        | declaration"""
 
 def p_declaration(p):
     """declaration : variables_declaration
@@ -30,8 +26,8 @@ def p_variables_declaration(p: YaccProduction):
     """variables_declaration : VAR variables_list"""
 
 def p_variables_list(p: YaccProduction):
-    """variables_list : same_type_variables
-                      | variables_list same_type_variables"""
+    """variables_list : variables_list same_type_variables
+                      | same_type_variables"""
 
 def p_same_type_variables(p: YaccProduction):
     """same_type_variables : id_list ':' DATATYPE ';'
@@ -52,12 +48,9 @@ def p_procedure(p):
     """procedure : PROCEDURE ID '(' parameters ')' ';' var_or_not code_block ';'"""
 
 def p_parameters(p):
-    """parameters : parameter_list
+    """parameters : parameter ';' parameter
+                  | parameter
                   |"""
-
-def p_parameter_list(p):
-    """parameter_list : parameter_list ';' parameter
-                      | parameter"""
 
 def p_parameter(p):
     """
