@@ -48,9 +48,12 @@ def p_procedure(p):
     """procedure : PROCEDURE ID '(' parameters ')' ';' var_or_not code_block ';'"""
 
 def p_parameters(p):
-    """parameters : parameter ';' parameter
-                  | parameter
+    """parameters : parameter_list
                   |"""
+
+def p_parameter_list(p):
+    """parameter_list : parameter_list ';' parameter
+                      | parameter"""
 
 def p_parameter(p):
     """
