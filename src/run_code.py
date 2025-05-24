@@ -32,4 +32,3 @@ async def runCode(code: str):
 
     await browser.close()
 
-asyncio.run(runCode("code"))
