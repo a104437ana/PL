@@ -234,14 +234,21 @@ program LoopTamanhoMenosUm;
 
 var
   i, tamanho: integer;
+  testeBooleano: boolean;
 
 begin
-  tamanho := 5;  { Você pode mudar esse valor }
+  tamanho := 5 + 4;  { Você pode mudar esse valor }
+
+  testeBooleano := "oi" <> "oii";  { Atribuição de booleano para teste sintático }
 
   for i := 0 to tamanho - 1 do
     writeln('Valor de i: ', i);
+
   for i := 0 to (tamanho - 1) do
     writeln('Valor de i: ', i);
+
+  for i := 0 to tamanho <> 0 do
+    writeln("OLÁ");
 end.
 '''
 

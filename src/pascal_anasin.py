@@ -154,7 +154,7 @@ def p_else(p: YaccProduction):
     p[0] = If(p[2], [p[4]], [p[6]])
 
 def p_assignment(p: YaccProduction):
-    """assignment : ID ASSIGNMENT expr"""
+    """assignment : ID ASSIGNMENT cond"""
     p[0] = Assignment(p[1], p[3])
 
 def p_loop(p: YaccProduction):
@@ -167,8 +167,8 @@ def p_for(p: YaccProduction):
     p[0] = Loop("for", p[2], [p[4]])
 
 def p_for_cond(p: YaccProduction):
-    """for_cond : assignment TO expr
-                | assignment DOWNTO expr"""
+    """for_cond : assignment TO cond
+                | assignment DOWNTO cond"""
     p[0] = p[1] ####################################### falta ver
 
 def p_while(p: YaccProduction):
