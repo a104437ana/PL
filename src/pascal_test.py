@@ -1,8 +1,12 @@
 from pascal_exemplos import *
 from pascal_analex import tokens, literals, lexer
 from pascal_anasin import parser
+import sys
 
 if __name__ == "__main__":
+    printAst = False
+    if len(sys.argv) > 1 and sys.argv[1] == "ast":
+        printAst = True
     for i in "0123456789":
         texto = exemplos[i]
         lexer.has_errors = False
@@ -21,4 +25,5 @@ if __name__ == "__main__":
             print(f"\033[1;31mExample {i} - Syntax analysis  ❌\033[0m")
         else:
             print(f"\033[1;92mExample {i} - Syntax analysis  ✅\033[0m")
-        print(str(ast))
+        if printAst:
+            print(str(ast))
