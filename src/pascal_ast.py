@@ -1,6 +1,8 @@
 # variáveis globais da ast
-global_vars = {}
+global_vars = {}        # dicionário ID -> posição no global pointer
+global_vars_type = {}   # dicionário ID -> tipo da variável
 known_functions = {}
+last_global_pointer = 0 # última posição do global pointer
 
 # metodos globais da ast
 
@@ -12,9 +14,15 @@ class Program:
         self.code = code                    # classe CodeBlock
     
     def generateVmCode(self):
+        code = ""
         for decl in self.declarations:
-            code += f"\n{decl.generateVmCode()}"
-        code = f"START\n"
+            if isinstance(decl, Variables):
+                code += f"\n{decl.generateVmCodePush()}"
+            elif isinstance(decl, Function):
+                code += f"\n" # ver como fazer
+            elif isinstance(decl, Procedure):
+                code += f"\n" # ver como fazer
+        code += f"\nSTART\n"
         code += f"{self.code.generateVmCode()}"
         code += f"STOP"
         return code
@@ -44,6 +52,20 @@ class Variable():
     def generateVmCode(self):
         return ""
 
+    def generateVmCodePush(self):
+        code = ""
+        if self.type == "string":
+            code += f'pushs ""'
+        elif self.type == "character":
+            code += f'pushs ""'
+        elif self.type == "integer":
+            code += f"pushi 0"
+        elif self.type == "real":
+            code += f"pusf 0.0"
+        elif self.type == "boolean":
+            code += f"pushi 0"
+        return code
+
     def __str__(self):
         var = f"{self.id}: {self.type}"
         if self.is_array:
@@ -71,6 +93,16 @@ class Variables(Declaration):
 
     def generateVmCode(self):
         return ""
+
+    def generateVmCodePush(self):
+        global last_global_pointer, global_vars, global_vars_type
+        code = ""
+        for id, var in self.variables.items():
+            code += var.generateVmCodePush() + f" // variavel {var.id}\n"
+            global_vars[var.id] = last_global_pointer
+            global_vars_type[var.id] = var.type
+            last_global_pointer += 1
+        return code
 
     def __str__(self):
         if len(self.variables.items()) > 0:
@@ -280,8 +312,8 @@ class Value(Expression):
 
 class FunctionCall(Expression):
     def __init__(self, id, args):
-        self.id = id        # ID da função
-        self.args = args    # lista de argumentos da função classes Value ou FunctionCall
+        self.id = str(id).lower()   # ID da função
+        self.args = args            # lista de argumentos da função classes Value ou FunctionCall
 
     def generateVmCode(self):
         code = ""
@@ -289,7 +321,24 @@ class FunctionCall(Expression):
             for arg in self.args:
                 arg = str(arg).replace("'", '"')
                 code += f"pushs {arg}\n"
-            code += "writes"
+                code += "writes\n"
+        elif self.id == "write":
+            for arg in self.args:
+                arg = str(arg).replace("'", '"')
+                code += f"pushs {arg}\n"
+                code += "writes\n"
+        elif self.id == "readln":
+            global global_vars, global_vars_type
+            code += "read\n"
+            var_pointer = global_vars[str(self.args[0])]
+            var_type = global_vars_type[str(self.args[0])]
+            if var_type == "integer":
+                code += f"atoi\n"
+            elif var_type == "real":
+                code += f"atof 0.0"
+            elif var_type == "boolean":
+                code += f"atoi 0"   ################ ver como fazer para booleans
+            code += f"storeg {var_pointer}"
         return code
 
     def __str__(self):
