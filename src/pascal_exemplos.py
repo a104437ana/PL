@@ -230,52 +230,19 @@ end.
 '''
 
 exemplo9 = '''
-program TesteCompletoParametros;
+program LoopTamanhoMenosUm;
 
 var
-  a, b, resultado: integer;
-  arr: array[1..5] of integer;
+  i, tamanho: integer;
 
-procedure Incrementa(var x: integer);
 begin
-  x := x + 1;
-end;
+  tamanho := 5;  { Você pode mudar esse valor }
 
-function SomaArray(v: array of integer; tamanho: integer): integer;
-var
-  i, s: integer;
-begin
-  s := 0;
   for i := 0 to tamanho - 1 do
-    s := s + v[i];
-  SomaArray := s;
-end;
-
-begin
-  a := 10;
-  b := 20;
-
-  Incrementa(a);
-  writeln('a depois do incremento: ', a);
-
-  resultado := SomaArray(arr, 5);
-  writeln('Soma do array: ', resultado);
-
-  if resultado > 0 then
-    writeln('Soma positiva')
-  else
-    writeln('Soma zero ou negativa');
-
-  for a := 1 to 5 do
-    writeln('Iteração: ', a);
-
-  while b > 0 do
-  begin
-    writeln('Decrementando b: ', b);
-    b := b - 1;
-  end;
+    writeln('Valor de i: ', i);
+  for i := 0 to (tamanho - 1) do
+    writeln('Valor de i: ', i);
 end.
-
 '''
 
 exemplos = {
