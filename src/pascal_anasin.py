@@ -273,8 +273,8 @@ def p_args(p: YaccProduction):
         p[0] = []
 
 def p_elems(p: YaccProduction):
-    """elems : elems ',' value
-             | value"""
+    """elems : elems ',' cond
+             | cond"""
     if len(p) == 4:
         p[0] = p[1]
         p[0].append(p[3])

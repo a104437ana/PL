@@ -248,7 +248,7 @@ begin
     writeln('Valor de i: ', i);
 
   for i := 0 to tamanho <> 0 do
-    writeln("OLÁ");
+    writeln(i + 1);
 end.
 '''
 
