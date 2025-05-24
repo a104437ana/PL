@@ -239,8 +239,6 @@ var
 begin
   tamanho := 5 + 4;  { Você pode mudar esse valor }
 
-  testeBooleano := "oi" <> "oii";  { Atribuição de booleano para teste sintático }
-
   for i := 0 to tamanho - 1 do
     writeln('Valor de i: ', i);
 
@@ -249,6 +247,10 @@ begin
 
   for i := 0 to tamanho <> 0 do
     writeln(i + 1);
+  
+  testeBooleano := NOT true = true;  { Atribuição de booleano para teste sintático }
+  
+  tamanho := 1 + 2 * 4 + 3 * 2;
 end.
 '''
 
