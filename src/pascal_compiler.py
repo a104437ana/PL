@@ -18,7 +18,7 @@ if __name__ == "__main__":
         print("Incorrect arguments")
         print("py pascal_compiler.py")
         print("py pascal_compiler.py <input file> <output file>")
-        print("py pascal_compiler.py <input file> <output file> -vm")
+        print("py pascal_compiler.py <input file> -vm")
         sys.exit()
 
     lexer.has_errors = False
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     else:
         print(f"\033[1;92mSyntax analysis  ✅\033[0m")
     
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 3 and sys.argv[2] != "-vm":
         if os.path.isdir(f"{cwd}/out"):
             out_dir = f"{cwd}/out"
         elif os.path.isdir(f"{cwd}/../out"):
@@ -47,8 +47,8 @@ if __name__ == "__main__":
         f_out.close()
     elif len(sys.argv) == 1:
         print(ast) # alterar para função que gera código
-    elif len(sys.argv) == 4 and sys.argv[3] == "-vm":
-        code = str(ast) # alterar para função que gera código
+    elif len(sys.argv) == 3 and sys.argv[2] == "-vm":
+        code = ast.generateVmCode()
         asyncio.run(runCode(code))
     else:
         print("Incorrect arguments")

@@ -1,8 +1,23 @@
+# variáveis globais da ast
+global_vars = {}
+known_functions = {}
+
+# metodos globais da ast
+
+
 class Program:
     def __init__(self, id, declarations, code):
-        self.id = id
-        self.declarations = declarations
-        self.code = code
+        self.id = id                        # ID do programa
+        self.declarations = declarations    # lista de classes Declaration
+        self.code = code                    # classe CodeBlock
+    
+    def generateVmCode(self):
+        for decl in self.declarations:
+            code += f"\n{decl.generateVmCode()}"
+        code = f"START\n"
+        code += f"{self.code.generateVmCode()}"
+        code += f"STOP"
+        return code
 
     def __str__(self):
         prog = f"program {self.id};\n"
@@ -18,13 +33,16 @@ class Declaration:
 
 class Variable():
     def __init__(self, id, type, is_array=False, array_size=0, array_init=0, array_type=None, value=None):
-        self.id = id
-        self.type = type
-        self.is_array = is_array
-        self.array_size = array_size
-        self.array_init = array_init
-        self.array_type = array_type
-        self.value = value
+        self.id = id                    # ID da variável
+        self.type = type                # tipo da variável
+        self.is_array = is_array        # se é um array
+        self.array_size = array_size    # tamanho do array
+        self.array_init = array_init    # primeiro índice do array
+        self.array_type = array_type    # tipo de dados do array
+        self.value = value              # valor
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         var = f"{self.id}: {self.type}"
@@ -36,7 +54,7 @@ class Variable():
 
 class Variables(Declaration):
     def __init__(self, variables=None):
-        self.variables = variables if variables is not None else {} # dict
+        self.variables = variables if variables is not None else {} # dicionário ID -> classe Variable
     
     def add(self, variable: Variable):
         if isinstance(variable, Variable):
@@ -50,6 +68,9 @@ class Variables(Declaration):
 
     def items(self):
         return self.variables.items()
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         if len(self.variables.items()) > 0:
@@ -74,11 +95,14 @@ class Variables(Declaration):
 
 class Function(Declaration):
     def __init__(self, id, parameters, return_type, vars, algorithm):
-        self.id = id
-        self.parameters = parameters
-        self.return_type = return_type
-        self.vars = vars
-        self.algorithm = algorithm
+        self.id = id                        # ID da função
+        self.parameters = parameters        # classe Variables com as variáveis dos parametros
+        self.return_type = return_type      # tipo de retorno
+        self.vars = vars                    # classe Variables com as variáveis da função
+        self.algorithm = algorithm          # classe CodeBlock
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         func = f"function {self.id}({self.parameters.strParams()}): {self.return_type};\n"
@@ -90,10 +114,13 @@ class Function(Declaration):
 
 class Procedure(Declaration):
     def __init__(self, id, parameters, vars, algorithm):
-        self.id = id
-        self.parameters = parameters
-        self.vars = vars
-        self.algorithm = algorithm
+        self.id = id                    # ID do procedimento
+        self.parameters = parameters    # classe Variables com as variáveis dos parametros
+        self.vars = vars                # classe Variables com as variáveis da função
+        self.algorithm = algorithm      # classe CodeBlock
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         proc = f"procedure {self.id}({self.parameters.strParams()});\n"
@@ -105,11 +132,17 @@ class Procedure(Declaration):
 
 class Algorithm:
     def __init__(self, statements=None):
-        self.statements = statements if statements is not None else []
+        self.statements = statements if statements is not None else []  # lista de classes Statement
 
     def add(self, statement):
         if statement is not None:
             self.statements.append(statement)
+
+    def generateVmCode(self):
+        code = ""
+        for statement in self.statements:
+            code += f"{statement.generateVmCode()}\n"
+        return code
 
     def __str__(self):
         algorithm = ""
@@ -124,8 +157,11 @@ class Statement:
 
 class Assignment(Statement):
     def __init__(self, id, expr):
-        self.id = id
-        self.expr = expr
+        self.id = id        # ID da variável do assignment
+        self.expr = expr    # classe Expression
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         assign = f"{self.id} := {str(self.expr)};"
@@ -134,10 +170,13 @@ class Assignment(Statement):
     __repr__ = __str__
 
 class Loop(Statement):
-    def __init__(self, loop_type, cond, statement=[]):
-        self.loop_type = loop_type
-        self.cond = cond
-        self.statement = statement
+    def __init__(self, loop_type, cond, statement=None):
+        self.loop_type = loop_type                                      # tipo do loop
+        self.cond = cond                                                # classe Condition (falta)
+        self.statement = statement if statement is not None else []     # lista de classes Statement
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         loop = ""
@@ -155,9 +194,12 @@ class Loop(Statement):
 
 class If(Statement):
     def __init__(self, cond, true_statement, false_statement=None):
-        self.cond = cond
-        self.true_statement = true_statement
-        self.false_statement = false_statement
+        self.cond = cond                            # classe Condition (falta)
+        self.true_statement = true_statement        # classe Statement
+        self.false_statement = false_statement      # classe Statement
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         if_statement = f"if {str(self.cond)} then\n"
@@ -176,7 +218,12 @@ class If(Statement):
 
 class CodeBlock(Statement):
     def __init__(self, algorithm):
-        self.algorithm = algorithm
+        self.algorithm = algorithm      # classe Algorithm
+
+    def generateVmCode(self):
+        code = ""
+        code += f"{self.algorithm.generateVmCode()}"
+        return code
 
     def __str__(self):
         code = f"begin\n"
@@ -191,9 +238,12 @@ class Expression:
 
 class BinaryOp(Expression):
     def __init__(self, left, op, right):
-        self.left = left
-        self.op = op
-        self.right = right
+        self.left = left        # classe Expression
+        self.op = op            # string operador
+        self.right = right      # classe Expression
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         bin_op = f"{str(self.left)} {self.op} {str(self.right)}"
@@ -203,8 +253,11 @@ class BinaryOp(Expression):
 
 class UnaryOp(Expression):
     def __init__(self, op, expr):
-        self.op = op
-        self.expr = expr
+        self.op = op        # string operador
+        self.expr = expr    # classe Expression
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         unary_op = f"{self.op} {str(self.expr)}"
@@ -214,8 +267,11 @@ class UnaryOp(Expression):
 
 class Value(Expression):
     def __init__(self, value, type):
-        self.value = value
-        self.type = type
+        self.value = value      # valor
+        self.type = type        # string do tipo do valor
+
+    def generateVmCode(self):
+        return ""
 
     def __str__(self):
         return str(self.value)
@@ -224,8 +280,17 @@ class Value(Expression):
 
 class FunctionCall(Expression):
     def __init__(self, id, args):
-        self.id = id
-        self.args = args
+        self.id = id        # ID da função
+        self.args = args    # lista de argumentos da função classes Value ou FunctionCall
+
+    def generateVmCode(self):
+        code = ""
+        if self.id == "writeln":
+            for arg in self.args:
+                arg = str(arg).replace("'", '"')
+                code += f"pushs {arg}\n"
+            code += "writes"
+        return code
 
     def __str__(self):
         func_call = f"{self.id}("
