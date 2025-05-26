@@ -169,7 +169,7 @@ def p_for(p: YaccProduction):
 def p_for_cond(p: YaccProduction):
     """for_cond : assignment TO cond
                 | assignment DOWNTO cond"""
-    p[0] = p[1] ####################################### falta ver
+    p[0] = p[3]
 
 def p_while(p: YaccProduction):
     """while : WHILE cond DO statement"""
@@ -229,9 +229,9 @@ def p_fator(p: YaccProduction):
     if len(p) == 2:
         p[0] = p[1]
     if len(p) == 4:
-        pass ####################################### falta ver
+        p[0] = p[2]
     if len(p) == 3:
-        pass ####################################### falta ver
+        p[0] = UnaryOp("NOT", p[2])
 
 def p_value(p: YaccProduction):
     """value : ID
