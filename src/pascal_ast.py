@@ -193,7 +193,13 @@ class Assignment(Statement):
         self.expr = expr    # classe Expression
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        global global_vars, global_vars_type
+        var_pointer = global_vars[str(self.id)]
+        var_type = global_vars_type[str(self.id)]
+        code += self.expr.generateVmCode()
+        code += f"storeg {var_pointer}"
+        return code
 
     def __str__(self):
         assign = f"{self.id} := {str(self.expr)};"
@@ -204,7 +210,7 @@ class Assignment(Statement):
 class Loop(Statement):
     def __init__(self, loop_type, cond, statement=None):
         self.loop_type = loop_type                                      # tipo do loop
-        self.cond = cond                                                # classe Condition (falta)
+        self.cond = cond                                                # classe Expression
         self.statement = statement if statement is not None else []     # lista de classes Statement
 
     def generateVmCode(self):
@@ -226,7 +232,7 @@ class Loop(Statement):
 
 class If(Statement):
     def __init__(self, cond, true_statement, false_statement=None):
-        self.cond = cond                            # classe Condition (falta)
+        self.cond = cond                            # classe Expression
         self.true_statement = true_statement        # classe Statement
         self.false_statement = false_statement      # classe Statement
 
@@ -275,7 +281,36 @@ class BinaryOp(Expression):
         self.right = right      # classe Expression
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        if self.op == "+":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "ADD\n"
+        elif self.op == "-":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "SUB\n"
+        elif self.op == "OR":
+            pass
+        elif self.op == "*":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "MUL\n"
+        elif self.op == "/":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "DIV\n"
+        elif self.op == "AND":
+            pass
+        elif self.op == "MOD":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "MOD\n"
+        elif self.op == "DIV":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "DIV\n"
+        return code
 
     def __str__(self):
         bin_op = f"{str(self.left)} {self.op} {str(self.right)}"
@@ -289,7 +324,8 @@ class UnaryOp(Expression):
         self.expr = expr    # classe Expression
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        return code
 
     def __str__(self):
         unary_op = f"{self.op} {str(self.expr)}"
@@ -303,7 +339,20 @@ class Value(Expression):
         self.type = type        # string do tipo do valor
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        return code
+
+    def generateVmCode(self):
+        code = ""
+        if self.type == "int":
+            code += f"PUSHI {int(self.value)}\n"
+        elif self.type == "real":
+            code += f"PUSHF {float(self.value)}\n"
+        elif self.type == "string":
+            code += f"PUSHS {str(self.value)}\n"
+        elif self.type == "bool":
+            code += f"PUSHI {bool(self.value)}\n"   ################ ver como fazer para booleans
+        return code
 
     def __str__(self):
         return str(self.value)
@@ -313,31 +362,52 @@ class Value(Expression):
 class FunctionCall(Expression):
     def __init__(self, id, args):
         self.id = str(id).lower()   # ID da função
-        self.args = args            # lista de argumentos da função classes Value ou FunctionCall
+        self.args = args            # lista de argumentos da função classes Value ou FunctionCall  ########  Ver como distinguir se os argumentos são variáveis ou só valores
 
     def generateVmCode(self):
         code = ""
-        if self.id == "writeln":
+        global global_vars, global_vars_type
+        if self.id == "writeln" or self.id == "write":
             for arg in self.args:
-                arg = str(arg).replace("'", '"')
-                code += f"pushs {arg}\n"
-                code += "writes\n"
-        elif self.id == "write":
-            for arg in self.args:
-                arg = str(arg).replace("'", '"')
-                code += f"pushs {arg}\n"
-                code += "writes\n"
+                try:
+                    var_pointer = global_vars[str(arg)]
+                    var_type = global_vars_type[str(arg)]
+                except:
+                    var_pointer = None
+                    var_type = None
+                if var_type == "string":
+                    code += f"PUSHG {var_pointer}\n"
+                    code += "WRITES\n"
+                elif var_type == "integer":
+                    code += f"PUSHG {var_pointer}\n"
+                    code += f"WRITEI\n"
+                elif var_type == "real":
+                    code += f"PUSHG {var_pointer}\n"
+                    code += f"WRITEF\n"
+                elif var_type == "boolean":
+                    code += f"PUSHG {var_pointer}\n"
+                    code += f"WRITEI\n"   ################ ver como fazer para booleans
+                else:
+                    arg = str(arg).replace("'", '"')
+                    code += f"PUSHS {arg}\n"
+                    code += "WRITES\n"
+            if self.id == "writeln":
+                code += "PUSHS \"\\n\"\n"
+                code += "WRITES\n"
         elif self.id == "readln":
-            global global_vars, global_vars_type
             code += "read\n"
-            var_pointer = global_vars[str(self.args[0])]
-            var_type = global_vars_type[str(self.args[0])]
+            try:
+                var_pointer = global_vars[str(self.args[0])]
+                var_type = global_vars_type[str(self.args[0])]
+            except:
+                var_pointer = None
+                var_type = None
             if var_type == "integer":
                 code += f"atoi\n"
             elif var_type == "real":
-                code += f"atof 0.0"
+                code += f"atof 0.0\n"
             elif var_type == "boolean":
-                code += f"atoi 0"   ################ ver como fazer para booleans
+                code += f"atoi 0\n"   ################ ver como fazer para booleans
             code += f"storeg {var_pointer}"
         return code
 
