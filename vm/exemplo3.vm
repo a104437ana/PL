@@ -1,0 +1,38 @@
+PUSHI 0 // n
+PUSHI 0 // i
+PUSHI 0 // fat
+
+START
+
+PUSHS "Introduza um número inteiro positivo:\n"
+WRITES
+READ
+ATOI
+STOREG 0
+
+PUSHI 1
+STOREG 2
+
+// i := 1
+PUSHI 1
+STOREG 1
+
+// fazer for
+// ...
+
+// fat := fat * i
+PUSHG 2
+PUSHG 1
+MUL
+STOREG 2
+
+PUSHS "Fatorial de "
+WRITES
+PUSHG 0
+WRITEI
+PUSHS ": "
+WRITES
+PUSHG 2
+WRITEI
+
+STOP

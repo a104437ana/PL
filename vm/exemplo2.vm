@@ -1,0 +1,91 @@
+PUSHI 0 // num1
+PUSHI 0 // num2
+PUSHI 0 // num3
+PUSHI 0 // maior
+
+START
+
+PUSHS "Introduza o primeiro número: \n"
+WRITES
+READ
+ATOI
+STOREG 0
+
+PUSHS "Introduza o segundo número: \n"
+WRITES
+READ
+ATOI
+STOREG 1
+
+PUSHS "Introduza o terceiro número: \n"
+WRITES
+READ
+ATOI
+STOREG 2
+
+// condição if1
+PUSHG 0
+PUSHG 1
+SUPEQ
+JZ ELSE1
+
+IF1:
+
+    // condição if2
+    PUSHG 0
+    PUSHG 2
+    SUPEQ
+    JZ ELSE2
+
+    IF2:
+
+        PUSHG 0
+        STOREG 3
+
+        JUMP END2
+
+    ELSE2:
+
+        PUSHG 2
+        STOREG 3
+
+        JUMP END2
+
+    END2:
+
+    JUMP END1
+
+ELSE1:
+
+    // condição if3
+    PUSHG 1
+    PUSHG 2
+    SUPEQ
+    JZ ELSE3
+
+    IF3:
+
+        PUSHG 1
+        STOREG 3
+
+        JUMP END3
+
+    ELSE3:
+
+        PUSHG 2
+        STOREG 3
+
+        JUMP END3
+
+    END3:
+
+    JUMP END1
+
+END1:
+
+PUSHS "O maior é: "
+WRITES
+PUSHG 3
+WRITEI
+
+STOP
