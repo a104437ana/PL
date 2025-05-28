@@ -256,7 +256,11 @@ def p_value(p: YaccProduction):
     elif p.slice[1].type == "STRING":
         p[0] = Value(str(p[1]), "string")
     elif p.slice[1].type == "BOOL":
-        p[0] = Value(bool(p[1]), "bool")
+        b = str(p[1]).lower()
+        if b == "true":
+            p[0] = Value(int(1), "bool")
+        elif b == "false":
+            p[0] = Value(int(0), "bool")
     elif p.slice[1].type == "func_call":
         p[0] = p[1]
 

@@ -198,7 +198,7 @@ class Assignment(Statement):
         var_pointer = global_vars[str(self.id)]
         var_type = global_vars_type[str(self.id)]
         code += self.expr.generateVmCode()
-        code += f"storeg {var_pointer}"
+        code += f"STOREG {var_pointer}"
         return code
 
     def __str__(self):
@@ -291,7 +291,9 @@ class BinaryOp(Expression):
             code += self.right.generateVmCode()
             code += "SUB\n"
         elif self.op == "OR":
-            pass
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "OR\n"
         elif self.op == "*":
             code += self.left.generateVmCode()
             code += self.right.generateVmCode()
@@ -301,7 +303,9 @@ class BinaryOp(Expression):
             code += self.right.generateVmCode()
             code += "DIV\n"
         elif self.op == "AND":
-            pass
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "AND\n"
         elif self.op == "MOD":
             code += self.left.generateVmCode()
             code += self.right.generateVmCode()
@@ -310,6 +314,31 @@ class BinaryOp(Expression):
             code += self.left.generateVmCode()
             code += self.right.generateVmCode()
             code += "DIV\n"
+        elif self.op == "=":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "EQUAL\n"
+        elif self.op == "<>":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "EQUAL\n"
+            code += "NOT\n"
+        elif self.op == "<":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "INF\n"
+        elif self.op == "<=":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "INFEQ\n"
+        elif self.op == ">":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "SUP\n"
+        elif self.op == ">=":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "SUPEQ\n"
         return code
 
     def __str__(self):
@@ -325,6 +354,9 @@ class UnaryOp(Expression):
 
     def generateVmCode(self):
         code = ""
+        if self.op == "NOT":
+            code += self.expr.generateVmCode()
+            code += "NOT\n"
         return code
 
     def __str__(self):
@@ -340,10 +372,6 @@ class Value(Expression):
 
     def generateVmCode(self):
         code = ""
-        return code
-
-    def generateVmCode(self):
-        code = ""
         if self.type == "int":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "real":
@@ -351,7 +379,7 @@ class Value(Expression):
         elif self.type == "string":
             code += f"PUSHS {str(self.value)}\n"
         elif self.type == "bool":
-            code += f"PUSHI {bool(self.value)}\n"   ################ ver como fazer para booleans
+            code += f"PUSHI {int(self.value)}\n"
         elif self.type == "id":
             global global_vars, global_vars_type
             if str(self.value) in global_vars.keys():
@@ -394,7 +422,7 @@ class FunctionCall(Expression):
                     code += f"WRITEF\n"
                 elif var_type == "boolean":
                     code += f"PUSHG {var_pointer}\n"
-                    code += f"WRITEI\n"   ################ ver como fazer para booleans
+                    code += f"WRITEI\n"
                 else:
                     arg = str(arg).replace("'", '"')
                     code += f"PUSHS {arg}\n"
@@ -410,12 +438,12 @@ class FunctionCall(Expression):
                 var_pointer = None
                 var_type = None
             if var_type == "integer":
-                code += f"atoi\n"
+                code += f"ATOI\n"
             elif var_type == "real":
-                code += f"atof 0.0\n"
+                code += f"ATOF 0.0\n"
             elif var_type == "boolean":
-                code += f"atoi 0\n"   ################ ver como fazer para booleans
-            code += f"storeg {var_pointer}"
+                code += f"ATOI 0\n"   ################ ver como fazer para booleans
+            code += f"STOREG {var_pointer}"
         return code
 
     def __str__(self):
