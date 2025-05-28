@@ -352,6 +352,14 @@ class Value(Expression):
             code += f"PUSHS {str(self.value)}\n"
         elif self.type == "bool":
             code += f"PUSHI {bool(self.value)}\n"   ################ ver como fazer para booleans
+        elif self.type == "id":
+            global global_vars, global_vars_type
+            if str(self.value) in global_vars.keys():
+                var_pointer = global_vars[str(self.value)]
+                code += f"PUSHG {var_pointer}\n"
+            else:
+                pass  ######## Erro
+
         return code
 
     def __str__(self):
@@ -392,8 +400,7 @@ class FunctionCall(Expression):
                     code += f"PUSHS {arg}\n"
                     code += "WRITES\n"
             if self.id == "writeln":
-                code += "PUSHS \"\\n\"\n"
-                code += "WRITES\n"
+                code += "WRITELN\n"
         elif self.id == "readln":
             code += "read\n"
             try:

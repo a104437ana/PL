@@ -244,7 +244,7 @@ def p_value(p: YaccProduction):
              | func_call"""
     if p.slice[1].type == "ID":
         if len(p) == 2:
-            p[0] = p[1] ####################################### falta ver melhor
+            p[0] = Value(str(p[1]), "id")
         elif p.slice[3].type == "INT":
             p[0] = p[1] ####################################### falta ver melhor
         elif p.slice[3].type == "ID":
