@@ -231,13 +231,30 @@ class Loop(Statement):
     __repr__ = __str__
 
 class If(Statement):
+    nextID = 0
+
     def __init__(self, cond, true_statement, false_statement=None):
         self.cond = cond                            # classe Expression
         self.true_statement = true_statement        # classe Statement
         self.false_statement = false_statement      # classe Statement
+        self.ifID = If.nextID
+        If.nextID += 1
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        code += self.cond.generateVmCode()
+        if self.false_statement != None:
+            code += f"JZ ELSE{self.ifID} // if\n"
+        else:
+            code += f"JZ ENDIF{self.ifID} // if\n"
+        code += self.true_statement.generateVmCode()
+        code += f"JUMP ENDIF{self.ifID}\n"
+        if self.false_statement != None:
+            code += f"ELSE{self.ifID}: // else\n"
+            code += self.false_statement.generateVmCode()
+            code += f"JUMP ENDIF{self.ifID}\n"
+        code += f"ENDIF{self.ifID}:\n"
+        return code
 
     def __str__(self):
         if_statement = f"if {str(self.cond)} then\n"
@@ -443,7 +460,7 @@ class FunctionCall(Expression):
                 code += f"ATOF 0.0\n"
             elif var_type == "boolean":
                 code += f"ATOI 0\n"   ################ ver como fazer para booleans
-            code += f"STOREG {var_pointer}"
+            code += f"STOREG {var_pointer}\n"
         return code
 
     def __str__(self):

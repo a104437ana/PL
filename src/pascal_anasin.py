@@ -147,11 +147,11 @@ def p_statement(p: YaccProduction):
 
 def p_if(p: YaccProduction):
     """if : IF cond THEN statement %prec IFX"""
-    p[0] = If(p[2], [p[4]])
+    p[0] = If(p[2], p[4])
 
 def p_else(p: YaccProduction):
     """else : IF cond THEN statement ELSE statement"""
-    p[0] = If(p[2], [p[4]], [p[6]])
+    p[0] = If(p[2], p[4], p[6])
 
 def p_assignment(p: YaccProduction):
     """assignment : ID ASSIGNMENT cond"""
