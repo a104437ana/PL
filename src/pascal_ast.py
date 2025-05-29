@@ -198,7 +198,7 @@ class Assignment(Statement):
         var_pointer = global_vars[str(self.id)]
         var_type = global_vars_type[str(self.id)]
         code += self.expr.generateVmCode()
-        code += f"STOREG {var_pointer}"
+        code += f"STOREG {var_pointer}\n"
         return code
 
     def __str__(self):
@@ -210,21 +210,43 @@ class Assignment(Statement):
 class Loop(Statement):
     nextID = 0
 
-    def __init__(self, loop_type, cond, statement=None):
+    def __init__(self, loop_type, cond, statement=None, assignment=None, for_type=None):
         self.loop_type = loop_type                                      # tipo do loop
         self.cond = cond                                                # classe Expression
         self.statement = statement if statement is not None else []     # lista de classes Statement
+        self.assignment = assignment                                    # classe Assignment
+        self.for_type = for_type                                        # string tipo de ciclo for
         self.loopID = Loop.nextID
         If.nextID += 1
 
     def generateVmCode(self):
         code = ""
-        code += f"LOOP{self.loopID}:\n"
-        code += self.cond.generateVmCode()
-        code += f"JZ ENDLOOP{self.loopID}\n"
-        code += self.statement.generateVmCode()
-        code += f"JUMP LOOP{self.loopID}\n"
-        code += f"ENDLOOP{self.loopID}:\n"
+        if self.loop_type == "while":
+            code += f"LOOP{self.loopID}:\n"
+            code += self.cond.generateVmCode()
+            code += f"JZ ENDLOOP{self.loopID}\n"
+            code += self.statement.generateVmCode()
+            code += f"JUMP LOOP{self.loopID}\n"
+            code += f"ENDLOOP{self.loopID}:\n"
+        elif self.loop_type == "for":
+            global global_vars
+            var_pointer = global_vars[self.assignment.id]
+            code += self.assignment.generateVmCode()
+            code += f"LOOP{self.loopID}:\n"
+            code += f"PUSHG {var_pointer}\n"
+            code += self.cond.generateVmCode()
+            if self.for_type == "to":
+                code += "INFEQ\n"
+            elif self.for_type == "downto":
+                code += "SUPEQ\n"
+            code += f"JZ ENDLOOP{self.loopID}\n"
+            code += self.statement.generateVmCode()
+            code += f"PUSHG {var_pointer}\n"
+            code += "PUSHI 1\n"
+            code += "ADD\n"
+            code += f"STOREG {var_pointer}\n"
+            code += f"JUMP LOOP{self.loopID}\n"
+            code += f"ENDLOOP{self.loopID}:\n"
         return code
 
     def __str__(self):
