@@ -19,4 +19,28 @@ O código desenvolvido pode ser encontrado na pasta [src](src).
 - A104263 - Inês Silva Marques
 - A76350 - José Rafael de Oliveira Vilas Boas
 
+## Utilização
+
+Correr o compilador de uma das seguintes formas
+
+* Para compilar o código diretamente para a vm (porta 27018):
+
+```bash
+    $ py pascal_compiler.py <ficheiro pascal> -vm
+```
+
+* Para compilar o código para um ficheiro
+
+```bash
+    $ py pascal_compiler.py <ficheiro pascal> <ficheiro output>
+    ou
+    $ py pascal_compiler.py < <ficheiro pascal> > <ficheiro output>
+```
+
+* Para compilar o código diretamente a partir da consola
+
+```bash
+    $ py pascal_compiler.py
+```
+
 ![BUGBUSTERS](report/cover/Bugbusters.png)
