@@ -164,7 +164,7 @@ def p_loop(p: YaccProduction):
 
 def p_for(p: YaccProduction):
     """for : FOR for_cond DO statement"""
-    p[0] = Loop("for", p[2], [p[4]])
+    p[0] = Loop("for", p[2], p[4])
 
 def p_for_cond(p: YaccProduction):
     """for_cond : assignment TO cond
@@ -173,7 +173,7 @@ def p_for_cond(p: YaccProduction):
 
 def p_while(p: YaccProduction):
     """while : WHILE cond DO statement"""
-    p[0] = Loop("while", p[2], [p[4]])
+    p[0] = Loop("while", p[2], p[4])
 
 def p_cond(p: YaccProduction):
     """cond : expr

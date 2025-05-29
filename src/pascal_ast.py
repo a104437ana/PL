@@ -208,13 +208,24 @@ class Assignment(Statement):
     __repr__ = __str__
 
 class Loop(Statement):
+    nextID = 0
+
     def __init__(self, loop_type, cond, statement=None):
         self.loop_type = loop_type                                      # tipo do loop
         self.cond = cond                                                # classe Expression
         self.statement = statement if statement is not None else []     # lista de classes Statement
+        self.loopID = Loop.nextID
+        If.nextID += 1
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        code += f"LOOP{self.loopID}:\n"
+        code += self.cond.generateVmCode()
+        code += f"JZ ENDLOOP{self.loopID}\n"
+        code += self.statement.generateVmCode()
+        code += f"JUMP LOOP{self.loopID}\n"
+        code += f"ENDLOOP{self.loopID}:\n"
+        return code
 
     def __str__(self):
         loop = ""
@@ -447,7 +458,7 @@ class FunctionCall(Expression):
             if self.id == "writeln":
                 code += "WRITELN\n"
         elif self.id == "readln":
-            code += "read\n"
+            code += "READ\n"
             try:
                 var_pointer = global_vars[str(self.args[0])]
                 var_type = global_vars_type[str(self.args[0])]
