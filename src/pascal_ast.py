@@ -223,6 +223,8 @@ class Algorithm:
             if errors:
                 if errors[0] == "procedure":
                     return ""
+                elif errors in ["integer","real","boolean","string"]:
+                    return ""
                 else:
                     return errors
         return errors
@@ -262,7 +264,7 @@ class Assignment(Statement):
         if var_type != var_type2:
             if not (var_type == "real" and var_type2=="integer"):
                 return f"Incompatible types: cannot assign value of type '{var_type2}' to variable '{self.id}' of type '{var_type}': {self.id} := {self.expr}"
-        return ""
+        return var_type
 
     def generateVmCode(self):
         code = ""
@@ -307,16 +309,19 @@ class Loop(Statement):
     def anasem(self):
         if self.assignment != None:
             errors = self.assignment.anasem()
-            if errors:
+            if errors and not errors in ["integer","real","boolean","string"]:
                 return errors
+            if errors in ["real","boolean","string"]:
+                return f"Incompatible types: got '{errors}' expected 'integer': {self.loop_type} {self.assignment} {self.for_type} {self.cond}"
         c = self.cond.anasem()
         if c not in ["integer","boolean","real","string"]:
             return c
-        elif c != "boolean":
-            if self.loop_type == "while":
+        if self.loop_type == "while":
+            if c != "boolean":
                 return f"Incompatible types: got '{c}' expected 'boolean': {self.loop_type} {self.cond}"
-            elif self.loop_type == "for":
-                return ''
+        elif self.loop_type == "for":
+            if c != "integer":
+                return f"Incompatible types: got '{c}' expected 'integer': {self.loop_type} {self.assignment} {self.for_type} {self.cond}"
 
     def generateVmCode(self):
         code = ""
