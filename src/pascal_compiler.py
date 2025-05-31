@@ -47,7 +47,13 @@ if __name__ == "__main__":
         sys.exit()
     else:
         print(f"\033[1;92mSyntax analysis  ✅\033[0m")
-    
+    print("\033[1;93mSemantic analysis:\033[0m")
+    has_error = ast.anasem()
+    if has_error:
+        print("\033[1;31mSemantic analysis ❌\033[0m")
+        sys.exit()
+    else:
+        print("\033[1;92mSemantic analysis ✅\033[0m")
     code = ast.generateVmCode()
     if len(sys.argv) == 3 and sys.argv[2] != "-vm":
         if os.path.isdir(f"{cwd}/out"):
