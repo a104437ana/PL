@@ -2,6 +2,8 @@
 global_vars = {}        # dicionário ID -> posição no global pointer
 global_vars_type = {}   # dicionário ID -> tipo da variável
 known_functions = {}
+array_init = {}         # dicionário ID -> posição inicial do array
+array_type = {}         # dicionário ID -> tipo do array
 last_global_pointer = 0 # última posição do global pointer
 
 # metodos globais da ast
@@ -15,14 +17,17 @@ class Program:
     
     def generateVmCode(self):
         code = ""
+        heap = ""
         for decl in self.declarations:
             if isinstance(decl, Variables):
                 code += f"\n{decl.generateVmCodePush()}"
+                heap += f"\n{decl.generateVmCodeHeap()}"
             elif isinstance(decl, Function):
                 code += f"\n" # ver como fazer
             elif isinstance(decl, Procedure):
                 code += f"\n" # ver como fazer
         code += f"\nSTART\n"
+        code += f"{heap}\n"
         code += f"{self.code.generateVmCode()}"
         code += f"STOP"
         return code
@@ -69,15 +74,28 @@ class Variable():
     def generateVmCodePush(self):
         code = ""
         if self.type == "string":
-            code += f'pushs ""'
+            code += f'PUSHS ""'
         elif self.type == "character":
-            code += f'pushs ""'
+            code += f'PUSHS ""'
         elif self.type == "integer":
-            code += f"pushi 0"
+            code += f"PUSHI 0"
         elif self.type == "real":
-            code += f"pusf 0.0"
+            code += f"PUSHF 0.0"
         elif self.type == "boolean":
-            code += f"pushi 0"
+            code += f"PUSHI 0"
+        elif self.type == "array":
+            code += f"PUSHI 0"
+        return code
+
+    def generateVmCodeHeap(self):
+        code = ""
+        global global_vars, array_init, array_type
+        var_pointer = global_vars[str(self.id)]
+        array_init[self.id] = self.array_init
+        array_type[self.id] = self.array_type
+        code += f"PUSHI {self.array_size}\n"
+        code += "ALLOCN\n"
+        code += f"STOREG {var_pointer}\n"
         return code
 
     def __str__(self):
@@ -122,6 +140,14 @@ class Variables(Declaration):
             global_vars[var.id] = last_global_pointer
             global_vars_type[var.id] = var.type
             last_global_pointer += 1
+        return code
+
+    def generateVmCodeHeap(self):
+        code = ""
+        for id, var in self.variables.items():
+            if var.is_array:
+                code += f"// heap variavel {var.id}\n"
+                code += f"{var.generateVmCodeHeap()}"
         return code
 
     def __str__(self):
@@ -216,9 +242,11 @@ class Statement:
     pass
 
 class Assignment(Statement):
-    def __init__(self, id, expr):
+    def __init__(self, id, expr, array_pos=None, pos_type=None):
         self.id = id        # ID da variável do assignment
         self.expr = expr    # classe Expression
+        self.array_pos = array_pos
+        self.pos_type = pos_type
     
     def anasem(self):
         global global_vars_type
@@ -230,11 +258,24 @@ class Assignment(Statement):
 
     def generateVmCode(self):
         code = ""
-        global global_vars, global_vars_type
+        global global_vars, global_vars_type, array_init
         var_pointer = global_vars[str(self.id)]
         var_type = global_vars_type[str(self.id)]
-        code += self.expr.generateVmCode()
-        code += f"STOREG {var_pointer}\n"
+        if var_type != "array":
+            code += self.expr.generateVmCode()
+            code += f"STOREG {var_pointer}\n"
+        elif var_type == "array":
+            init = array_init[self.id]
+            code += f"PUSHG {var_pointer}\n"
+            pos = f"PUSHI {self.array_pos}\n"
+            if self.pos_type == "id":
+                id_pointer = global_vars[str(self.array_pos)]
+                pos = f"PUSHG {id_pointer}\n"
+            code += pos
+            code += f"PUSHI {init}\n"
+            code += "SUB\n"
+            code += self.expr.generateVmCode()
+            code += "STOREN\n"
         return code
 
     def __str__(self):
@@ -253,7 +294,7 @@ class Loop(Statement):
         self.assignment = assignment                                    # classe Assignment
         self.for_type = for_type                                        # string tipo de ciclo for
         self.loopID = Loop.nextID
-        If.nextID += 1
+        Loop.nextID += 1
 
     def generateVmCode(self):
         code = ""
@@ -455,9 +496,11 @@ class UnaryOp(Expression):
     __repr__ = __str__
 
 class Value(Expression):
-    def __init__(self, value, type):
+    def __init__(self, value, type, array_pos=None, pos_type=None):
         self.value = value      # valor
         self.type = type        # string do tipo do valor
+        self.array_pos = array_pos
+        self.pos_type = pos_type
     
     def anasem(self):
         if self.type == "int":
@@ -473,6 +516,7 @@ class Value(Expression):
 
     def generateVmCode(self):
         code = ""
+        global global_vars, global_vars_type, array_init
         if self.type == "int":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "real":
@@ -482,13 +526,40 @@ class Value(Expression):
         elif self.type == "bool":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "id":
-            global global_vars, global_vars_type
             if str(self.value) in global_vars.keys():
                 var_pointer = global_vars[str(self.value)]
                 code += f"PUSHG {var_pointer}\n"
             else:
                 pass  ######## Erro
+        elif self.type == "array":
+            var_pointer = global_vars[str(self.value)]
+            init = array_init[self.value]
+            code += f"PUSHG {var_pointer}\n"
+            pos = f"PUSHI {self.array_pos}\n"
+            if self.pos_type == "id":
+                id_pointer = global_vars[str(self.array_pos)]
+                pos = f"PUSHG {id_pointer}\n"
+            code += pos
+            code += f"PUSHI {init}\n"
+            code += "SUB\n"
+            code += "LOADN\n"
 
+        return code
+
+    def generateVmCodeArray(self):
+        code = ""
+        global global_vars, global_vars_type, array_init
+        if self.type == "array":
+            var_pointer = global_vars[str(self.value)]
+            init = array_init[self.value]
+            code += f"PUSHG {var_pointer}\n"
+            pos = f"PUSHI {self.array_pos}\n"
+            if self.pos_type == "id":
+                id_pointer = global_vars[str(self.array_pos)]
+                pos = f"PUSHG {id_pointer}\n"
+            code += pos
+            code += f"PUSHI {init}\n"
+            code += "SUB\n"
         return code
 
     def __str__(self):
@@ -503,7 +574,7 @@ class FunctionCall(Expression):
 
     def generateVmCode(self):
         code = ""
-        global global_vars, global_vars_type
+        global global_vars, global_vars_type, array_type
         if self.id == "writeln" or self.id == "write":
             for arg in self.args:
                 try:
@@ -524,6 +595,18 @@ class FunctionCall(Expression):
                 elif var_type == "boolean":
                     code += f"PUSHG {var_pointer}\n"
                     code += f"WRITEI\n"
+                elif var_type == "array":
+                    type_array = array_type[str(arg)]
+                    code += arg.generateVmCodeArray()
+                    code += "LOADN\n"
+                    if type_array == "string":
+                        code += "WRITES\n"
+                    elif type_array == "integer":
+                        code += f"WRITEI\n"
+                    elif type_array == "real":
+                        code += f"WRITEF\n"
+                    elif type_array == "boolean":
+                        code += f"WRITEI\n"
                 else:
                     arg = str(arg).replace("'", '"')
                     code += f"PUSHS {arg}\n"
@@ -531,20 +614,28 @@ class FunctionCall(Expression):
             if self.id == "writeln":
                 code += "WRITELN\n"
         elif self.id == "readln":
-            code += "READ\n"
             try:
                 var_pointer = global_vars[str(self.args[0])]
                 var_type = global_vars_type[str(self.args[0])]
             except:
                 var_pointer = None
                 var_type = None
+            is_array = False
+            if var_type == "array":
+                var_type = array_type[str(self.args[0])]
+                code += self.args[0].generateVmCodeArray()
+                is_array = True
+            code += "READ\n"
             if var_type == "integer":
                 code += f"ATOI\n"
             elif var_type == "real":
-                code += f"ATOF 0.0\n"
+                code += f"ATOF\n"
             elif var_type == "boolean":
-                code += f"ATOI 0\n"   ################ ver como fazer para booleans
-            code += f"STOREG {var_pointer}\n"
+                code += f"ATOI\n"
+            if is_array:
+                code += "STOREN\n"
+            else:
+                code += f"STOREG {var_pointer}\n"
         return code
 
     def __str__(self):

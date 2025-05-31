@@ -154,8 +154,13 @@ def p_else(p: YaccProduction):
     p[0] = If(p[2], p[4], p[6])
 
 def p_assignment(p: YaccProduction):
-    """assignment : ID ASSIGNMENT cond"""
-    p[0] = Assignment(p[1], p[3])
+    """assignment : ID ASSIGNMENT cond
+                  | ID '[' INT ']' ASSIGNMENT cond
+                  | ID '[' ID ']' ASSIGNMENT cond"""
+    if len(p) == 4:
+        p[0] = Assignment(p[1], p[3])
+    elif len(p) == 7:
+        p[0] = Assignment(p[1], p[6], p[3], str(p.slice[3].type).lower())
 
 def p_loop(p: YaccProduction):
     """loop : for
@@ -245,10 +250,8 @@ def p_value(p: YaccProduction):
     if p.slice[1].type == "ID":
         if len(p) == 2:
             p[0] = Value(str(p[1]), "id")
-        elif p.slice[3].type == "INT":
-            p[0] = p[1] ####################################### falta ver melhor
-        elif p.slice[3].type == "ID":
-            p[0] = p[1] ####################################### falta ver melhor
+        elif len(p) == 5:
+            p[0] = Value(str(p[1]), "array", p[3], str(p.slice[3].type).lower())
     elif p.slice[1].type == "INT":
         p[0] = Value(int(p[1]), "int")
     elif p.slice[1].type == "REAL":
