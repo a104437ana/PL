@@ -28,7 +28,18 @@ class Program:
         return code
     
     def anasem(self):
-        return False
+        errors = ""
+        for decl in self.declarations:
+            if isinstance(decl, Variables):
+                decl.anasem()
+            elif isinstance(decl, Function):
+                pass # ver como fazer
+            elif isinstance(decl, Procedure):
+                pass # ver como fazer
+        errors = self.code.anasem()
+        if errors:
+            print(f"\033[1;31mSemantic error - {errors}\033[0m")
+        return errors
 
     def __str__(self):
         prog = f"program {self.id};\n"
@@ -95,6 +106,12 @@ class Variables(Declaration):
         return self.variables.items()
 
     def generateVmCode(self):
+        return ""
+    
+    def anasem(self):
+        global global_vars_type
+        for id, var in self.variables.items():
+            global_vars_type[var.id] = var.type
         return ""
 
     def generateVmCodePush(self):
@@ -172,7 +189,15 @@ class Algorithm:
     def add(self, statement):
         if statement is not None:
             self.statements.append(statement)
-
+            
+    def anasem(self):
+        errors = ""
+        for statement in self.statements:
+            errors = statement.anasem()
+            if errors:
+                return errors
+        return errors
+    
     def generateVmCode(self):
         code = ""
         for statement in self.statements:
@@ -194,6 +219,14 @@ class Assignment(Statement):
     def __init__(self, id, expr):
         self.id = id        # ID da variável do assignment
         self.expr = expr    # classe Expression
+    
+    def anasem(self):
+        global global_vars_type
+        var_type = global_vars_type[str(self.id)]
+        var_type2 = self.expr.anasem()
+        if var_type != var_type2:
+            return "Tipos diferentes"
+        return ""
 
     def generateVmCode(self):
         code = ""
@@ -310,6 +343,9 @@ class If(Statement):
 class CodeBlock(Statement):
     def __init__(self, algorithm):
         self.algorithm = algorithm      # classe Algorithm
+        
+    def anasem(self):
+        return self.algorithm.anasem()
 
     def generateVmCode(self):
         code = ""
@@ -422,6 +458,18 @@ class Value(Expression):
     def __init__(self, value, type):
         self.value = value      # valor
         self.type = type        # string do tipo do valor
+    
+    def anasem(self):
+        if self.type == "int":
+            return "integer"
+        elif self.type == "real":
+            return "real"
+        elif self.type == "string":
+            return "string"
+        elif self.type == "bool":
+            return "boolean"
+        elif self.type == "id":
+            return "id"
 
     def generateVmCode(self):
         code = ""

@@ -1,57 +1,11 @@
 exemplo0 = '''
-program TesteCompleto;
+program TesteErro;
 
 var
-  i, n, soma: integer;
-
-procedure ImprimeLinha();
-begin
-  writeln('------------------------');
-end;
-
-function Fatorial(x: integer): integer;
-var
-  resultado, j: integer;
-begin
-  resultado := 1;
-  for j := 1 to x do
-    resultado := resultado * j;
-  Fatorial := resultado;
-end;
+  aa: Integer;
 
 begin
-  writeln('Programa Teste Completo Pascal');
-  ImprimeLinha();
-
-  writeln('Digite um número inteiro positivo:');
-  readln(n);
-
-  if n < 0 then
-  begin
-    writeln('Número inválido!');
-  end
-  else
-  begin
-    soma := 0;
-    i := 0;
-    while i <= n do
-    begin
-      soma := soma + i;
-      i := i + 1;
-    end;
-
-    writeln('Soma dos números de 0 até ', n, ' é: ', soma);
-
-    writeln('Fatorial de ', n, ' é: ', Fatorial(n));
-
-    writeln('Contagem regressiva de 10 até 1:');
-    for i := 10 downto 1 do
-      writeln(i);
-
-  end;
-
-  ImprimeLinha();
-  writeln('Fim do programa.');
+  aa := 'string';  { Isto causará um erro de tipo }
 end.
 '''
 
