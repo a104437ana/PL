@@ -5,24 +5,23 @@ from run_code import runCode
 import asyncio
 import sys
 import os
+import re
 
 if __name__ == "__main__":
     cwd = os.getcwd()
-    if len(sys.argv) == 3 or len(sys.argv) == 4:
+    if (len(sys.argv) == 3 or len(sys.argv) == 2) and not bool(re.match(r"\d", sys.argv[1])):
         f_in = open(f"{cwd}/{sys.argv[1]}", 'r')
         lines = f_in.readlines()
         codigo = "".join(lines)
         f_in.close()
-    elif len(sys.argv) == 1:
-        codigo = input()
-    elif len(sys.argv) == 2:
+    elif (len(sys.argv) == 3 or len(sys.argv) == 2) and bool(re.match(r"\d", sys.argv[1])):
         escolha = sys.argv[1]
         if escolha in exemplos:
             print(exemplos[escolha])
             codigo = exemplos[escolha]
     else:
         print("Incorrect arguments")
-        print("py pascal_compiler.py")
+        print("py pascal_compiler.py <input file>")
         print("py pascal_compiler.py <input file> <output file>")
         print("py pascal_compiler.py <input file> -vm")
         sys.exit()
@@ -33,6 +32,7 @@ if __name__ == "__main__":
         pass
     if lexer.has_errors:
         print(f"\033[1;31mLexical analysis ❌\033[0m")
+        sys.exit()
     else:
         print(f"\033[1;92mLexical analysis ✅\033[0m")
 
@@ -40,21 +40,22 @@ if __name__ == "__main__":
     ast = parser.parse(codigo)
     if parser.has_errors:
         print(f"\033[1;31mSyntax analysis  ❌\033[0m")
+        sys.exit()
     else:
         print(f"\033[1;92mSyntax analysis  ✅\033[0m")
     
+    code = ast.generateVmCode()
     if len(sys.argv) == 3 and sys.argv[2] != "-vm":
         if os.path.isdir(f"{cwd}/out"):
             out_dir = f"{cwd}/out"
         elif os.path.isdir(f"{cwd}/../out"):
             out_dir = f"{cwd}/../out"
         f_out = open(f"{out_dir}/{sys.argv[2]}", 'w')
-        f_out.writelines(str(ast)) # alterar para função que gera código
+        f_out.writelines(code)
         f_out.close()
-    elif len(sys.argv) == 1 or len(sys.argv) == 2:
-        print(ast) # alterar para função que gera código
+    elif len(sys.argv) == 2:
+        print(code)
     elif len(sys.argv) == 3 and sys.argv[2] == "-vm":
-        code = ast.generateVmCode()
         asyncio.run(runCode(code))
     else:
         print("Incorrect arguments")
