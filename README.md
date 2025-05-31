@@ -19,6 +19,8 @@ O código desenvolvido pode ser encontrado na pasta [src](src).
 - A104263 - Inês Silva Marques
 - A76350 - José Rafael de Oliveira Vilas Boas
 
+![BUGBUSTERS](report/cover/Bugbusters.png)
+
 ## Utilização
 
 Correr o compilador de uma das seguintes formas
@@ -42,5 +44,3 @@ Correr o compilador de uma das seguintes formas
 ```bash
     $ py pascal_compiler.py
 ```
-
-![BUGBUSTERS](report/cover/Bugbusters.png)

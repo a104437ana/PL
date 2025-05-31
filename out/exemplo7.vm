@@ -1,0 +1,24 @@
+
+
+PUSHS "" // variavel bin
+PUSHI 0 // variavel valor
+
+START
+
+
+PUSHS "Introduza uma string binária:"
+WRITES
+WRITELN
+
+READ
+STOREG 0
+
+STOREG 1
+
+PUSHS "O valor inteiro correspondente é: "
+WRITES
+PUSHG 1
+WRITEI
+WRITELN
+
+STOP
