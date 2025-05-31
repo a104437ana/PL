@@ -74,7 +74,7 @@ class Variable():
     def generateVmCodePush(self):
         code = ""
         if self.type == "string":
-            code += f'PUSHS ""'
+            code += f'PUSHI 0'
         elif self.type == "character":
             code += f'PUSHS ""'
         elif self.type == "integer":
@@ -347,7 +347,10 @@ class Loop(Statement):
             code += self.statement.generateVmCode()
             code += f"PUSHG {var_pointer}\n"
             code += "PUSHI 1\n"
-            code += "ADD\n"
+            if self.for_type == "to":
+                code += "ADD\n"
+            elif self.for_type == "downto":
+                code += "SUB\n"
             code += f"STOREG {var_pointer}\n"
             code += f"JUMP LOOP{self.loopID}\n"
             code += f"ENDLOOP{self.loopID}:\n"
@@ -791,6 +794,8 @@ class Value(Expression):
         elif self.type == "string":
             value = str(self.value).replace("'", '"')
             code += f"PUSHS {str(value)}\n"
+            if len(value) == 3:
+                code += "CHRCODE\n"
         elif self.type == "bool":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "id":
@@ -801,16 +806,28 @@ class Value(Expression):
                 pass  ######## Erro
         elif self.type == "array":
             var_pointer = global_vars[str(self.value)]
-            init = array_init[self.value]
-            code += f"PUSHG {var_pointer}\n"
-            pos = f"PUSHI {self.array_pos}\n"
-            if self.pos_type == "id":
-                id_pointer = global_vars[str(self.array_pos)]
-                pos = f"PUSHG {id_pointer}\n"
-            code += pos
-            code += f"PUSHI {init}\n"
-            code += "SUB\n"
-            code += "LOADN\n"
+            var_type = global_vars_type[str(self.value)]
+            if var_type == "string":
+                code += f"PUSHG {var_pointer}\n"
+                pos = f"PUSHI {self.array_pos}\n"
+                if self.pos_type == "id":
+                    id_pointer = global_vars[str(self.array_pos)]
+                    pos = f"PUSHG {id_pointer}\n"
+                code += pos
+                code += f"PUSHI 1\n"
+                code += "SUB\n"
+                code += "CHARAT\n"
+            else:
+                init = array_init[self.value]
+                code += f"PUSHG {var_pointer}\n"
+                pos = f"PUSHI {self.array_pos}\n"
+                if self.pos_type == "id":
+                    id_pointer = global_vars[str(self.array_pos)]
+                    pos = f"PUSHG {id_pointer}\n"
+                code += pos
+                code += f"PUSHI {init}\n"
+                code += "SUB\n"
+                code += "LOADN\n"
 
         return code
 
@@ -859,7 +876,10 @@ class FunctionCall(Expression):
                     var_type = None
                 if var_type == "string":
                     code += arg.generateVmCode()
-                    code += "WRITES\n"
+                    if len(str(arg.value)) == 3:
+                        code += "WRITECHR\n"
+                    else:
+                        code += "WRITES\n"
                 elif var_type == "integer":
                     code += arg.generateVmCode()
                     code += f"WRITEI\n"
@@ -915,6 +935,12 @@ class FunctionCall(Expression):
                 code += "STOREN\n"
             else:
                 code += f"STOREG {var_pointer}\n"
+        elif self.id == "length":
+            var_pointer = global_vars[str(self.args[0])]
+            var_type = global_vars_type[str(self.args[0])]
+            if var_type == "string":
+                code += f"PUSHG {var_pointer}\n"
+                code += f"STRLEN\n"
         return code
 
     def __str__(self):
