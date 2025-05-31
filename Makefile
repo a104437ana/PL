@@ -23,6 +23,8 @@ $(BUILD_DIR):
 
 $(PDF_FILE): $(TEX_FILE) | $(BUILD_DIR)
 	$(LATEX) -output-directory=$(BUILD_DIR) $(TEX_FILE)
+	$(LATEX) -output-directory=$(BUILD_DIR) $(TEX_FILE)
+	$(LATEX) -output-directory=$(BUILD_DIR) $(TEX_FILE)
 
 clean:
 	$(RMDIR)
