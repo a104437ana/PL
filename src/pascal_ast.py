@@ -700,7 +700,8 @@ class Value(Expression):
         elif self.type == "real":
             code += f"PUSHF {float(self.value)}\n"
         elif self.type == "string":
-            code += f"PUSHS {str(self.value)}\n"
+            value = str(self.value).replace("'", '"')
+            code += f"PUSHS {str(value)}\n"
         elif self.type == "bool":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "id":
@@ -761,26 +762,34 @@ class FunctionCall(Expression):
                 except:
                     var_pointer = None
                     var_type = None
-                code += arg.generateVmCode()
                 if var_type == "string":
+                    code += arg.generateVmCode()
                     code += "WRITES\n"
                 elif var_type == "integer":
+                    code += arg.generateVmCode()
                     code += f"WRITEI\n"
                 elif var_type == "real":
+                    code += arg.generateVmCode()
                     code += f"WRITEF\n"
                 elif var_type == "boolean":
+                    code += arg.generateVmCode()
                     code += f"WRITEI\n"
                 elif isinstance(arg, BinaryOp):
+                    code += arg.generateVmCode()
                     code += f"WRITEI\n"
                 elif var_type == "array":
                     type_array = array_type[str(arg)]
                     if type_array == "string":
+                        code += arg.generateVmCode()
                         code += "WRITES\n"
                     elif type_array == "integer":
+                        code += arg.generateVmCode()
                         code += f"WRITEI\n"
                     elif type_array == "real":
+                        code += arg.generateVmCode()
                         code += f"WRITEF\n"
                     elif type_array == "boolean":
+                        code += arg.generateVmCode()
                         code += f"WRITEI\n"
                 else:
                     arg = str(arg).replace("'", '"')
