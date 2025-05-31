@@ -19,6 +19,8 @@ if __name__ == "__main__":
         if escolha in exemplos:
             print(exemplos[escolha])
             codigo = exemplos[escolha]
+    elif (len(sys.argv)==1):
+        codigo = input()
     else:
         print("Incorrect arguments")
         print("py pascal_compiler.py <input file>")
@@ -27,6 +29,7 @@ if __name__ == "__main__":
         sys.exit()
 
     lexer.has_errors = False
+    print("\033[1;93mLexical analysis:\033[0m")
     lexer.input(codigo)
     for tok in lexer:
         pass
@@ -37,6 +40,7 @@ if __name__ == "__main__":
         print(f"\033[1;92mLexical analysis ✅\033[0m")
 
     parser.has_errors = False
+    print("\033[1;93mSyntax analysis:\033[0m")
     ast = parser.parse(codigo)
     if parser.has_errors:
         print(f"\033[1;31mSyntax analysis  ❌\033[0m")
@@ -53,7 +57,7 @@ if __name__ == "__main__":
         f_out = open(f"{out_dir}/{sys.argv[2]}", 'w')
         f_out.writelines(code)
         f_out.close()
-    elif len(sys.argv) == 2:
+    elif len(sys.argv) == 2 or len(sys.argv) == 1:
         print(code)
     elif len(sys.argv) == 3 and sys.argv[2] == "-vm":
         asyncio.run(runCode(code))

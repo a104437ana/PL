@@ -26,6 +26,9 @@ class Program:
         code += f"{self.code.generateVmCode()}"
         code += f"STOP"
         return code
+    
+    def anasem(self):
+        return False
 
     def __str__(self):
         prog = f"program {self.id};\n"
