@@ -1,5 +1,6 @@
 from pascal_anasin import parser
 from pascal_analex import tokens, literals, lexer
+from pascal_exemplos import *
 from run_code import runCode
 import asyncio
 import sys
@@ -14,6 +15,11 @@ if __name__ == "__main__":
         f_in.close()
     elif len(sys.argv) == 1:
         codigo = input()
+    elif len(sys.argv) == 2:
+        escolha = sys.argv[1]
+        if escolha in exemplos:
+            print(exemplos[escolha])
+            codigo = exemplos[escolha]
     else:
         print("Incorrect arguments")
         print("py pascal_compiler.py")
@@ -45,7 +51,7 @@ if __name__ == "__main__":
         f_out = open(f"{out_dir}/{sys.argv[2]}", 'w')
         f_out.writelines(str(ast)) # alterar para função que gera código
         f_out.close()
-    elif len(sys.argv) == 1:
+    elif len(sys.argv) == 1 or len(sys.argv) == 2:
         print(ast) # alterar para função que gera código
     elif len(sys.argv) == 3 and sys.argv[2] == "-vm":
         code = ast.generateVmCode()
