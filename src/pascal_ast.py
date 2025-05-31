@@ -703,22 +703,19 @@ class FunctionCall(Expression):
                 except:
                     var_pointer = None
                     var_type = None
+                code += arg.generateVmCode()
                 if var_type == "string":
-                    code += f"PUSHG {var_pointer}\n"
                     code += "WRITES\n"
                 elif var_type == "integer":
-                    code += f"PUSHG {var_pointer}\n"
                     code += f"WRITEI\n"
                 elif var_type == "real":
-                    code += f"PUSHG {var_pointer}\n"
                     code += f"WRITEF\n"
                 elif var_type == "boolean":
-                    code += f"PUSHG {var_pointer}\n"
+                    code += f"WRITEI\n"
+                elif isinstance(arg, BinaryOp):
                     code += f"WRITEI\n"
                 elif var_type == "array":
                     type_array = array_type[str(arg)]
-                    code += arg.generateVmCodeArray()
-                    code += "LOADN\n"
                     if type_array == "string":
                         code += "WRITES\n"
                     elif type_array == "integer":
