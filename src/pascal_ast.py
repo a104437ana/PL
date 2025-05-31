@@ -441,7 +441,7 @@ class BinaryOp(Expression):
                 return 'real'
             else:
                 return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
-        elif self.op == "OR":
+        elif self.op == "or":
             l = self.left.anasem()
             r = self.right.anasem()
             if l not in ["integer","boolean","real","string"]:
@@ -490,38 +490,93 @@ class BinaryOp(Expression):
             else:
                 return f"Incompatible types: Operator '{self.op}' expects operands of type 'boolean', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == "MOD":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "MOD\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "integer" and r == 'integer':
+                return 'integer'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == "DIV":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "DIV\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "integer" and r == 'integer':
+                return 'integer'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == "=":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "EQUAL\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == r:
+                return "boolean"
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of the same type, but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == "<>":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "EQUAL\n"
-            code += "NOT\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == r:
+                return "boolean"
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of the same type, but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == "<":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "INF\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'boolean'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == "<=":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "INFEQ\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'boolean'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == ">":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "SUP\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'boolean'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
         elif self.op == ">=":
-            code += self.left.generateVmCode()
-            code += self.right.generateVmCode()
-            code += "SUPEQ\n"
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'boolean'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
 
     def generateVmCode(self):
         code = ""
@@ -632,7 +687,10 @@ class Value(Expression):
         elif self.type == "bool":
             return "boolean"
         elif self.type == "id":
-            return "id"
+            if (self.value in global_vars_type.keys()):
+                return global_vars_type[self.value]
+            else:
+                return f"This variable was not declared before: '{self.value}'"
 
     def generateVmCode(self):
         code = ""

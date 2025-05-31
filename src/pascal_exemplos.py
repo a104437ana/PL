@@ -10,8 +10,9 @@ var
 begin
   s := 'Olá, mundo!';
   r := 3.14;
-  b := not True and 1;
-  i := 42;
+  b := not True;
+  i := 0;
+  i := 42 + i;
 end.
 
 '''
