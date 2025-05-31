@@ -221,7 +221,10 @@ class Algorithm:
         for statement in self.statements:
             errors = statement.anasem()
             if errors:
-                return errors
+                if errors[0] == "procedure":
+                    return ""
+                else:
+                    return errors
         return errors
     
     def generateVmCode(self):
@@ -418,6 +421,10 @@ class BinaryOp(Expression):
         if self.op == "+":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -431,6 +438,10 @@ class BinaryOp(Expression):
         elif self.op == "-":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -441,9 +452,13 @@ class BinaryOp(Expression):
                 return 'real'
             else:
                 return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
-        elif self.op == "or":
+        elif self.op == "OR":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -455,6 +470,10 @@ class BinaryOp(Expression):
         elif self.op == "*":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -468,6 +487,10 @@ class BinaryOp(Expression):
         elif self.op == "/":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -478,9 +501,13 @@ class BinaryOp(Expression):
                 return 'real'
             else:
                 return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
-        elif self.op == "and":
+        elif self.op == "AND":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -492,6 +519,10 @@ class BinaryOp(Expression):
         elif self.op == "MOD":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -503,6 +534,10 @@ class BinaryOp(Expression):
         elif self.op == "DIV":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -514,6 +549,10 @@ class BinaryOp(Expression):
         elif self.op == "=":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -525,6 +564,10 @@ class BinaryOp(Expression):
         elif self.op == "<>":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -536,6 +579,10 @@ class BinaryOp(Expression):
         elif self.op == "<":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -547,6 +594,10 @@ class BinaryOp(Expression):
         elif self.op == "<=":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -558,6 +609,10 @@ class BinaryOp(Expression):
         elif self.op == ">":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -569,6 +624,10 @@ class BinaryOp(Expression):
         elif self.op == ">=":
             l = self.left.anasem()
             r = self.right.anasem()
+            if l[0] == "procedure":
+                return f"Cannot use procedure {l[1]} as a value: {self.left} {self.op} {self.right}"
+            if r[0] == "procedure":
+                return f"Cannot use procedure {r[1]} as a value: {self.left} {self.op} {self.right}"
             if l not in ["integer","boolean","real","string"]:
                 return l
             elif r not in ["integer","boolean","real","string"]:
@@ -750,7 +809,13 @@ class FunctionCall(Expression):
     def __init__(self, id, args):
         self.id = str(id).lower()   # ID da função
         self.args = args            # lista de argumentos da função classes Value ou FunctionCall  ########  Ver como distinguir se os argumentos são variáveis ou só valores
-
+        
+    def anasem(self):
+        if self.id == "writeln" or self.id == "write":
+            return ("procedure",self.id)
+        elif self.id == "readln":
+            return ("procedure",self.id)
+        
     def generateVmCode(self):
         code = ""
         global global_vars, global_vars_type, array_type

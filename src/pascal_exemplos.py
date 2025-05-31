@@ -10,9 +10,9 @@ var
 begin
   s := 'Olá, mundo!';
   r := 3.14;
-  b := not True;
-  i := 0;
-  i := 42 + i;
+  b := not False;
+  i := 0 + writeln('Ola, Mundo!');
+  writeln('Ola, Mundo!');
 end.
 
 '''
