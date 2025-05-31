@@ -1,6 +1,8 @@
+
 START
 
-pushs "Ola, Mundo!"
-writes
+PUSHS "Ola, Mundo!"
+WRITES
+WRITELN
 
 STOP

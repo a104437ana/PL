@@ -1,13 +1,3 @@
-exemplo0 = '''
-program ForDemo;
-var
-  i: integer;
-begin
-  for i := 1 to 3 do
-    writeln(i);
-end.
-'''
-
 exemplo1 = '''
 program HelloWorld;
 begin
@@ -140,75 +130,7 @@ writeln('O valor inteiro correspondente é: ', valor);
 end.
 '''
 
-exemplo8 = '''
-program TesteGramatica;
-
-var
-  x, y, z: integer;
-
-procedure MostrarValor(v: integer);
-begin
-  writeln('Valor: ', v);
-end;
-
-function Somar(a, b: integer): integer;
-begin
-  Somar := a + b;
-end;
-
-begin
-  x := 10;
-  y := 20;
-
-  if x < y then
-    MostrarValor(x)
-  else
-    MostrarValor(y);
-
-  z := 0;
-  for x := 1 to 5 do
-  begin
-    z := Somar(z, x);
-    writeln('z agora é: ', z);
-  end;
-
-  while z > 0 do
-  begin
-    writeln('Decrementando z: ', z);
-    z := z - 1;
-  end;
-
-end.
-
-'''
-
-exemplo9 = '''
-program LoopTamanhoMenosUm;
-
-var
-  i, tamanho: integer;
-  testeBooleano: boolean;
-
-begin
-  tamanho := 5 + 4;  { Você pode mudar esse valor }
-
-  for i := 0 to tamanho - 1 do
-    writeln('Valor de i: ', i);
-
-  for i := 0 to (tamanho - 1) do
-    writeln('Valor de i: ', i);
-
-  for i := 0 to tamanho <> 0 do
-    writeln(i + 1);
-  
-  testeBooleano := NOT true = true;  { Atribuição de booleano para teste sintático }
-  
-  tamanho := 1 + 2 * 4 + 3 * 2;
-end.
-'''
-
 exemplos = {
-    "0": exemplo0,
     "1": exemplo1,
     "2": exemplo2,
     "3": exemplo3,
@@ -216,6 +138,4 @@ exemplos = {
     "5": exemplo5,
     "6": exemplo6,
     "7": exemplo7,
-    "8": exemplo8,
-    "9": exemplo9,
 }

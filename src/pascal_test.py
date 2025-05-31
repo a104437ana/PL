@@ -6,7 +6,7 @@ import sys
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "ast":
         printAst = True
-    for i in "0123456789":
+    for i in "1234567":
         texto = exemplos[i]
         lexer.has_errors = False
         lexer.input(texto)
@@ -17,7 +17,7 @@ if __name__ == "__main__":
         else:
             print(f"\033[1;92mExample {i} - Lexical analysis  ✅\033[0m")
     asts = []
-    for i in "0123456789":
+    for i in "1234567":
         texto = exemplos[i]
         parser.has_errors = False
         ast = parser.parse(texto)
@@ -27,7 +27,7 @@ if __name__ == "__main__":
         else:
             print(f"\033[1;92mExample {i} - Syntax analysis   ✅\033[0m")
             asts.append(ast)
-    for i in "0123456789":
+    for i in "1234567":
         has_error = asts[int(i)].anasem()
         if has_error:
             print(f"\033[1;31mExample {i} - Semantic analysis ❌\033[0m")
