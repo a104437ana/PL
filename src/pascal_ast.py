@@ -252,8 +252,11 @@ class Assignment(Statement):
         global global_vars_type
         var_type = global_vars_type[str(self.id)]
         var_type2 = self.expr.anasem()
+        if not var_type2 in ["integer","boolean","real","string"]:
+            return var_type2
         if var_type != var_type2:
-            return "Tipos diferentes"
+            if not (var_type == "real" and var_type2=="integer"):
+                return f"Incompatible types: cannot assign value of type '{var_type2}' to variable '{self.id}' of type '{var_type}': {self.id} := {self.expr}"
         return ""
 
     def generateVmCode(self):
@@ -409,6 +412,116 @@ class BinaryOp(Expression):
         self.left = left        # classe Expression
         self.op = op            # string operador
         self.right = right      # classe Expression
+    
+    def anasem(self):
+        code = ""
+        if self.op == "+":
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "integer" and r == 'integer':
+                return 'integer'
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'real'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
+        elif self.op == "-":
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "integer" and r == 'integer':
+                return 'integer'
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'real'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
+        elif self.op == "OR":
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "boolean" and r == 'boolean':
+                return 'boolean'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'boolean', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
+        elif self.op == "*":
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "integer" and r == 'integer':
+                return 'integer'
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'real'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
+        elif self.op == "/":
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "integer" and r == 'integer':
+                return 'integer'
+            elif l in ["integer","real"] and r in ['integer','real']:
+                return 'real'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'integer' or 'real', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
+        elif self.op == "and":
+            l = self.left.anasem()
+            r = self.right.anasem()
+            if l not in ["integer","boolean","real","string"]:
+                return l
+            elif r not in ["integer","boolean","real","string"]:
+                return r
+            elif l == "boolean" and r == 'boolean':
+                return 'boolean'
+            else:
+                return f"Incompatible types: Operator '{self.op}' expects operands of type 'boolean', but got '{l}' and '{r}': {self.left} {self.op} {self.right}"
+        elif self.op == "MOD":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "MOD\n"
+        elif self.op == "DIV":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "DIV\n"
+        elif self.op == "=":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "EQUAL\n"
+        elif self.op == "<>":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "EQUAL\n"
+            code += "NOT\n"
+        elif self.op == "<":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "INF\n"
+        elif self.op == "<=":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "INFEQ\n"
+        elif self.op == ">":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "SUP\n"
+        elif self.op == ">=":
+            code += self.left.generateVmCode()
+            code += self.right.generateVmCode()
+            code += "SUPEQ\n"
 
     def generateVmCode(self):
         code = ""
@@ -481,6 +594,13 @@ class UnaryOp(Expression):
     def __init__(self, op, expr):
         self.op = op        # string operador
         self.expr = expr    # classe Expression
+    
+    def anasem(self):
+        var_type = self.expr.anasem()
+        if var_type == "boolean":
+            return "boolean"
+        else:
+            return f"Incompatible types: got '{var_type}' expected 'boolean': {self.op} {self.expr}"
 
     def generateVmCode(self):
         code = ""

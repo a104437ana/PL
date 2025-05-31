@@ -1,12 +1,19 @@
 exemplo0 = '''
-program TesteErro;
+program InicializacaoVariaveis;
 
 var
-  aa: Integer;
+  s: String;
+  r: Real;
+  b: Boolean;
+  i: Integer;
 
 begin
-  aa := 'string';  { Isto causará um erro de tipo }
+  s := 'Olá, mundo!';
+  r := 3.14;
+  b := not True and 1;
+  i := 42;
 end.
+
 '''
 
 exemplo1 = '''
