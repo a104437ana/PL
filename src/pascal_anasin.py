@@ -217,7 +217,10 @@ def p_op_ad(p: YaccProduction):
     """op_ad : '+'
              | '-'
              | OR"""
-    p[0] = p[1]
+    if p.slice[1].type == "OR":
+        p[0] = str(p[1]).upper()
+    else:
+        p[0] = p[1]
 
 def p_op_mul(p: YaccProduction):
     """op_mul : '*'
@@ -225,7 +228,10 @@ def p_op_mul(p: YaccProduction):
              | AND
              | MOD
              | DIV"""
-    p[0] = p[1]
+    if p.slice[1].type in ["AND", "MOD", "DIV"]:
+        p[0] = str(p[1]).upper()
+    else:
+        p[0] = p[1]
 
 def p_fator(p: YaccProduction):
     """fator : value
