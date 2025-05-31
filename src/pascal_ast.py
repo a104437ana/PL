@@ -253,6 +253,8 @@ class Assignment(Statement):
     
     def anasem(self):
         global global_vars_type
+        if not (self.id in global_vars_type.keys()):
+            return f"This variable was not declared before: '{self.id}'"
         var_type = global_vars_type[str(self.id)]
         var_type2 = self.expr.anasem()
         if not var_type2 in ["integer","boolean","real","string"]:
@@ -301,6 +303,20 @@ class Loop(Statement):
         self.for_type = for_type                                        # string tipo de ciclo for
         self.loopID = Loop.nextID
         Loop.nextID += 1
+        
+    def anasem(self):
+        if self.assignment != None:
+            errors = self.assignment.anasem()
+            if errors:
+                return errors
+        c = self.cond.anasem()
+        if c not in ["integer","boolean","real","string"]:
+            return c
+        elif c != "boolean":
+            if self.loop_type == "while":
+                return f"Incompatible types: got '{c}' expected 'boolean': {self.loop_type} {self.cond}"
+            elif self.loop_type == "for":
+                return ''
 
     def generateVmCode(self):
         code = ""
@@ -355,7 +371,14 @@ class If(Statement):
         self.false_statement = false_statement      # classe Statement
         self.ifID = If.nextID
         If.nextID += 1
-
+        
+    def anasem(self):
+        c = self.cond.anasem()
+        if c not in ["integer","boolean","real","string"]:
+            return c
+        elif c != "boolean":
+            return f"Incompatible types: got '{c}' expected 'boolean': if {self.cond}"
+    
     def generateVmCode(self):
         code = ""
         code += self.cond.generateVmCode()
@@ -713,8 +736,10 @@ class UnaryOp(Expression):
         var_type = self.expr.anasem()
         if var_type == "boolean":
             return "boolean"
+        elif var_type not in ["integer","boolean","real","string"]:
+            return var_type
         else:
-            return f"Incompatible types: got '{var_type}' expected 'boolean': {self.op} {self.expr}"
+            return f"Incompatible types: Operator '{self.op}' expects operand of type 'boolean', but got '{var_type}': {self.op} {self.expr}"
 
     def generateVmCode(self):
         code = ""

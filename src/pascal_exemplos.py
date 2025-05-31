@@ -1,20 +1,11 @@
 exemplo0 = '''
-program InicializacaoVariaveis;
-
+program ForDemo;
 var
-  s: String;
-  r: Real;
-  b: Boolean;
-  i: Integer;
-
+  i: integer;
 begin
-  s := 'Olá, mundo!';
-  r := 3.14;
-  b := not False;
-  i := 0 + writeln('Ola, Mundo!');
-  writeln('Ola, Mundo!');
+  for i := 2.2 to 3 do
+    writeln(i);
 end.
-
 '''
 
 exemplo1 = '''

@@ -37,5 +37,6 @@ if __name__ == "__main__":
         has_error = ast.anasem()
         if has_error:
             print("\033[1;31mSemantic errors were found ❌\033[0m")
+            sys.exit()
         else:
             print("\033[1;92mSemantic analysis completed without errors ✅\033[0m")
