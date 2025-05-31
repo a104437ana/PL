@@ -1,4 +1,4 @@
-/build
+report/build
 __pycache__/
 parser.out
 parsetab.py
