@@ -1,11 +1,14 @@
 \documentclass[12pt,a4paper]{report}
 \usepackage[portuguese]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage{array}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage[pdftex]{hyperref}
 \usepackage{titling}
 \usepackage{amsmath}
+\usepackage{booktabs}
+\setlength{\parindent}{0pt}
 
 \setlength{\droptitle}{-2cm}
 
@@ -31,11 +34,8 @@
 \maketitle
 \begin{abstract}
     Este projeto teve como objetivo o desenvolvimento de um compilador para a linguagem Pascal Standard. O compilador foi construído em várias etapas, começando pela análise léxica, utilizando a biblioteca ply.lex para transformar o código-fonte em uma sequência de tokens. A seguir, foi implementada a análise sintática com ply.yacc, validando a estrutura do programa com base na gramática da linguagem.
-    A partir do código reconhecido, foi construída uma árvore sintática abstrata (AST), que representa de forma estruturada os elementos do programa. Com base nessa AST, foi realizada a análise semântica, incluindo verificação de declarações, tipos e coerência do código.
-    Na etapa de geração de código, adotámos uma abordagem de tradução dirigida pela sintaxe, convertendo a AST diretamente em código para uma máquina virtual disponibilizada no projeto.
-
-    MELHORA
-
+    A partir do código reconhecido, foi construída uma árvore sintática abstrata (AST), que representa de forma estruturada os elementos do programa. Com base nessa AST, foi realizada a análise semântica, incluindo verificação de tipos de dados, declarações de variáveis e coerência do código.
+    Na etapa de geração de código, a AST foi transformada diretamente em código para a máquina virtual do projeto. Para cada etapa, foram realizados testes automáticos com os exemplos de código Pascal fornecidos no enunciado.
 \end{abstract}
 
 \tableofcontents
@@ -45,15 +45,112 @@
 \chapter{Introdução}
 %\section{}
 %\subsection{}
-\textcolor{red}{\textbf{TODO}}
+O objetivo deste projeto foi desenvolver um compilador para a linguagem Pascal standard. Mais concretamente,
+pretendeu-se implementar um compilador capaz de analisar, interpretar e traduzir código Pascal para um formato
+intermediário e deste para código máquina ou diretamente para código máquina, neste caso da VM
+disponibilizada aos alunos. A equipa optou por primeiro passar o código Pascal para um formato intermediário e só depois passar deste para código máquina.
+O compilador deve ser capaz de processar programas Pascal standard, incluindo declaração de variáveis,
+expressões aritméticas e comandos de controle de fluxo (if, while, for).
+
+\vspace{1em}
+
+Para construir este compilador, houveram várias etapas:
+\begin{enumerate}
+    \item Análise léxica
+    \item Análise sintática
+    \item Árvore sintática abstrata (ATS)
+    \item Análise semântica
+    \item Geração de código
+\end{enumerate}
+
+Para além dessas etapas, foi também necessário realizar testes, os quais foram conduzidos de forma contínua ao longo do desenvolvimento.
 
 \chapter{Análise Léxica}
 
-\textcolor{red}{\textbf{TODO}}
+A análise léxica consistiu em implementar um analisador léxico (lexer) para converter código Pascal numa lista de tokens. Para implementar este lexer,
+usamos a ferramenta ply.lex, já conhecida das aulas.
+
+\section{Palavras Reservadas}
+
+O primeiro passo foi identificar as palavras reservadas da linguagem Pascal standart.
+
+\begin{center}
+\begin{tabular}{>{\ttfamily} l >{\ttfamily} l >{\ttfamily} l >{\ttfamily} l}
+\toprule
+and & array & begin & case \\
+const & div & do & downto \\
+else & end & file & for \\
+function & goto & if & in \\
+label & mod & nil & not \\
+of & or & packed & procedure \\
+program & record & repeat & set \\
+then & to & type & until \\
+var & while & with & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cada palavra reservada resulta num token que definimos.
+
+Por exemplo o token BEGIN (palavra reservada begin) definimos da seguinte forma:
+
+\begin{verbatim}
+def t_BEGIN(t):
+    r'[bB][eE][gG][iI][nN]\b'
+    return t
+\end{verbatim}
+
+Nesta expressão regular, cada letra aparece entre colchetes com as duas versões maiúscula e minúscula, o que permite que o reconhecimento seja \emph{case insensitive}, aceitando \texttt{begin}, \texttt{Begin}, \texttt{BEGIN}, etc.
+
+O símbolo \texttt{\b} representa uma \emph{boundary} (limite de palavra), garantindo que o lexer reconheça apenas a palavra completa \texttt{begin} e não uma parte de outra palavra maior, como \texttt{beginning}
+
+\section{Literals}
+
+O segundo passo foi identificar os simbolos únicos, os literals, compostos apenas por um caracter, desta linguagem.
+
+\begin{center}
+\begin{tabular}{>{\ttfamily} l >{\ttfamily} l >{\ttfamily} l >{\ttfamily} l}
+\toprule
++ & - & * & / \\
+= & < & > & [ \\
+] & . & , & : \\
+; & \^{} & ( & ) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cada um destes simbolos é um token.
+
+\section{Restantes tokens}
+
+O terceiro passo foi identificar os restantes tokens:
+\begin{center}
+\begin{tabular}{>{\ttfamily} l >{\ttfamily} l >{\ttfamily} l >{\ttfamily} l}
+\toprule
+NOT\_EQUAL & LESS\_EQUAL & GREATER\_EQUAL & ASSIGNMENT \\
+RANGE & LPA & ARP & LPP \\
+PRP & BOOL & DATATYPE & ID \\
+INT & REAL & STRING & COMMENT \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Os tokens do analisador léxico incluem operadores relacionais como o \texttt{NOT\_EQUAL}, que representa o símbolo de diferente (\texttt{<>}), além do \texttt{LESS\_EQUAL} e \texttt{GREATER\_EQUAL}, correspondentes aos operadores “menor ou igual” (\texttt{<=}) e “maior ou igual” (\texttt{>=}), respectivamente. O token \texttt{ASSIGNMENT} identifica o operador de atribuição usado em Pascal, que é representado por \texttt{:=}. Para representar intervalos, utiliza-se o token \texttt{RANGE}, que corresponde ao símbolo \texttt{..}.
+
+O token \texttt{BOOL} é usado para valores booleanos, como \texttt{true} e \texttt{false}, e o \texttt{DATATYPE} identifica os tipos de dados básicos da linguagem, incluindo \texttt{integer}, \texttt{real}, \texttt{char}, entre outros. Para nomes de variáveis, funções e procedimentos, o token \texttt{ID} é responsável por reconhecer os identificadores.
+
+Números inteiros e reais são capturados pelos tokens \texttt{INT} e \texttt{REAL}, respectivamente, enquanto cadeias de caracteres delimitadas por aspas são reconhecidas pelo token \texttt{STRING}. Por fim, o token \texttt{COMMENT} é utilizado para identificar os comentários no código, que são ignorados durante a compilação.
+
+Quanto a símbolos delimitadores, temos os tokens \texttt{LPA} e \texttt{ARP}, que correspondem a\texttt{(*} e \texttt{*)}, respectivamente, enquanto \texttt{LPP} e \texttt{PRP} representam \texttt{[} e \texttt{]}.
+
+Assim, o analisador léxico, o \texttt{pascal\_analex.py}, transforma o código pascal numa sequência de tokens. Se existir algum caracter ilegal, o lexer irá mostrar onde ocorreu o erro.
 
 \chapter{Análise Sintática}
 
+A análise sintática consistiu em construir um analisador sintático (parser) para validar a estrutura gramatical do código. Para implementar o parser usamos a ferramenta ply.yacc.
+
 \section{Gramática}
+O primeiro passo consiste em definir uma gramática da linguagem:
 
 \begin{tabbing}
 \hspace{1.3cm}\= \hspace{11cm}\= \kill
@@ -142,24 +239,39 @@
 
 \textcolor{red}{\textbf{TODO}}
 
-\chapter{Análise Semântica}
+\chapter{Árvore Sintática Abstrata (AST)}
 
 \textcolor{red}{\textbf{TODO}}
+
+\chapter{Análise Semântica}
+
+A análise semântica consistiu em verificar tipos de dados, declaração de variáveis e coerência do código. Para o fazer, percorremos a AST e fomos guardando algumas informações.
+
+Em concreto, na análise semântica 
 
 \chapter{Geração de Código}
 
 \textcolor{red}{\textbf{TODO}}
 
-\chapter{Otimização de Código}
-
-\textcolor{red}{\textbf{TODO}}
-
 \chapter{Testes}
 
-\textcolor{red}{\textbf{TODO}}
+Ao longo do desenvolvimento do projeto foram realizados testes.
+
+Tanto o analisador léxico, como analisador sintático, semantico como o compilador teem modo interativo, onde podemos testar código pascal.
+
+
+Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise sintática,
 
 \chapter{Conclusão}
 
-\textcolor{red}{\textbf{TODO}}
+Concluindo, conseguimos alcançar o objetivo principal deste projeto: construir um compilador para a linguagem Pascal Standard, que transforme código Pascal em código da máquina virtual.
+O nosso compilador é capaz de processar programas Pascal standart com declarações de variáveis, expressões aritméticas e comandos de controle de fluxo (if, while, for). Para além disto,
+seguimos as etapas do projeto: construímos um analisador léxico, um analisador sintático, fizemos uma árvore sintática abstrata, fizemos um analisador semântico, geramos o código desejado
+e ainda fizemos testes de tudo isto, para garantir a correção de todos estes programas.
+
+\vspace{1em}
+
+Assim, concluímos que conseguimos cumprir os principais objetivos do projeto. Ficou por fazer alguns extras como otimizações do código máquina e suporte a subprogramas (functions e procedures).
+Estes subprogramas estão suportados até ao nosso analisador sintático inclusive, mas depois não os implementamos nas fases seguintes.
 
 \end{document}

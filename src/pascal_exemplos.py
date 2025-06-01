@@ -396,7 +396,71 @@ WRITELN
 
 STOP'''
 
-vm6=''''''
+vm6 = '''
+PUSHI 0 // variavel bin
+PUSHI 0 // variavel i
+PUSHI 0 // variavel valor
+PUSHI 0 // variavel potencia
+
+START
+
+
+PUSHS "Introduza uma string binária:"
+WRITES
+WRITELN
+
+READ
+STOREG 13
+
+PUSHI 0
+STOREG 15
+
+PUSHI 1
+STOREG 16
+
+PUSHG 13
+STRLEN
+STOREG 14
+LOOP3:
+PUSHG 14
+PUSHI 1
+SUPEQ
+JZ ENDLOOP3
+PUSHG 13
+PUSHG 14
+PUSHI 1
+SUB
+CHARAT
+PUSHS "1"
+CHRCODE
+EQUAL
+JZ ENDIF5 // if
+PUSHG 15
+PUSHG 16
+ADD
+STOREG 15
+JUMP ENDIF5
+ENDIF5:
+
+PUSHG 16
+PUSHI 2
+MUL
+STOREG 16
+
+PUSHG 14
+PUSHI 1
+SUB
+STOREG 14
+JUMP LOOP3
+ENDLOOP3:
+
+PUSHS "O valor inteiro correspondente é: "
+WRITES
+PUSHG 15
+WRITEI
+WRITELN
+
+STOP'''
 
 vm7=''''''
 
