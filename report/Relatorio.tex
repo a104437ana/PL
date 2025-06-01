@@ -393,9 +393,11 @@ e verificando outras.
 Em concreto, na análise semântica:
 \begin{enumerate}
     \item não permitimos que se use variáveis que não tenham sido declaradas antes (dá erro);
-    \item verificamos quando se atribui uma variável a uma expressão, que ambas teem o mesmo tipo;
-    \item verificamos o tipo dos operadores numa operação e vemos se são os adequados.
-    \item ...
+    \item verificamos, quando se atribui uma variável a uma expressão, que ambas teem o mesmo tipo;
+    \item verificamos o tipo dos operadores numa operação e vemos se são os adequados, por exemplo, não é adequado comparar uma string e um integer;
+    \item verificamos se as expressões usadas em comandos de controlo de fluxo if e while são booleanas;
+    \item não permitimos ter procedures writeln, write ou readln no meio de expressões aritméticas ou lógicas, uma vez que estas não retornam valor;
+    \item verificamos se no for depois do TO ou do DOWNTO se temos um valor do tipo inteiro, ou uma expressão aritmética.
 \end{enumerate}
 
 \vspace{1em}
@@ -467,6 +469,29 @@ python3 pascal_compiler.py 1
 Para compilar o código diretamente para a vm (porta 27018), para quem tem Chrome:
 \begin{verbatim}
 python3 pascal_compiler.py ../examples/exemplo1.pas -vm
+\end{verbatim}
+\chapter{Testes}
+
+Ou então:
+
+\begin{verbatim}
+    python3 pascal_compiler.py 1 -vm
+    \end{verbatim}
+    \chapter{Testes}
+
+Ao longo do desenvolvimento do projeto foram realizados testes.
+
+Tanto o analisador léxico, como analisador sintático, semantico como o compilador teem os seus próprios programas. Assim, podemos testar cada fase individualmente.
+
+Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise léxica, sintática, semântica e gera código, isto tudo sobre os códigos em Pascal usados como exemplo no
+enunciado do projeto.
+
+Havia 7 códigos em Pascal no enunciado. Todos os códigos passam os testes de analise léxica, sintática e semântica porque são programas corretos, sem erros léxicos, sintáticos ou semanticos.
+Código de máquina é gerado para os 7 exemplos.
+
+Para testar se o código máquina gerado corre na máquina virtual e dá o resultado correto, temos de fazer manualmente.
+
+\vspace{1em}
 \end{verbatim}
 
 Para correr o teste geral com os 7 exemplos do enunciado fazemos:
