@@ -3,7 +3,7 @@ import sys
 from pyppeteer import launch
 from pyppeteer import errors
 
-async def runCode(code: str):
+async def runCode(code: str, url: str=None):
     browser = await launch(
         headless=False,
         executablePath=r"C:\Program Files\Google\Chrome\Application\chrome.exe" # Chrome path
@@ -14,7 +14,7 @@ async def runCode(code: str):
     page.on('close', close.set)
 
     try:
-        await page.goto('http://localhost:27018')
+        await page.goto(url or 'http://localhost:27018')
     except errors.PageError as e:
         await browser.close()
         print("Cannot connect to page")

@@ -9,12 +9,12 @@ import re
 
 if __name__ == "__main__":
     cwd = os.getcwd()
-    if (len(sys.argv) == 3 or len(sys.argv) == 2) and not bool(re.match(r"\d", sys.argv[1])):
+    if (len(sys.argv) <= 4 or len(sys.argv) >= 2) and not bool(re.match(r"\d", sys.argv[1])):
         f_in = open(f"{cwd}/{sys.argv[1]}", 'r')
         lines = f_in.readlines()
         codigo = "".join(lines)
         f_in.close()
-    elif (len(sys.argv) == 3 or len(sys.argv) == 2) and bool(re.match(r"\d", sys.argv[1])):
+    elif (len(sys.argv) <= 4 or len(sys.argv) >= 2) and bool(re.match(r"\d", sys.argv[1])):
         escolha = sys.argv[1]
         if escolha in exemplos:
             print(exemplos[escolha])
@@ -68,8 +68,8 @@ if __name__ == "__main__":
         f_out.close()
     elif len(sys.argv) == 2 or len(sys.argv) == 1:
         print(code)
-    elif len(sys.argv) == 3 and sys.argv[2] == "-vm":
-        asyncio.run(runCode(code))
+    elif (len(sys.argv) == 3 or len(sys.argv) == 4) and sys.argv[2] == "-vm":
+        asyncio.run(runCode(code, sys.argv[3] if len(sys.argv) > 3 else None))
     else:
         print("Incorrect arguments")
         sys.exit()
