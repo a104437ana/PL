@@ -36,7 +36,47 @@ cd src
 
 ## Compilador
 
-...
+Se quisermos testar o compilador com o input do terminal:
+```
+python3 pascal_compiler.py
+```
+
+Se quisermos testar com um ficheiro:
+```
+python3 pascal_compiler.py < ../examples/exemplo1.pas
+```
+
+Se quisermos ter um ficheiro de input com o código Pascal e um ficheiro de output com código da máquina virtual (o ficheiro vai para a pasta out):
+```
+python3 pascal_compiler.py ../examples/exemplo1.pas exemplo1.vm
+```
+
+Se quisermos testar com um exemplo concreto do enunciado:
+```
+python3 pascal_compiler.py 1
+```
+
+Para compilar o código diretamente para a vm, para quem tem Chrome:
+```
+python3 pascal_compiler.py ../examples/exemplo1.pas -vm https://ewvm.epl.di.uminho.pt
+```
+
+Ou então:
+
+```
+python3 pascal_compiler.py 1 -vm https://ewvm.epl.di.uminho.pt
+```
+
+Se tiver a vm localmente, para compilar o código diretamente para a vm (porta 27018), para quem tem Chrome:
+```
+python3 pascal_compiler.py ../examples/exemplo1.pas -vm
+```
+
+Ou então:
+
+```
+python3 pascal_compiler.py 1 -vm
+```
 
 ## Testes
 Para correr o teste geral com os 7 exemplos do enunciado fazemos:

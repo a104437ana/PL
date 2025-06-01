@@ -454,7 +454,18 @@ Se quisermos testar com um exemplo concreto do enunciado:
 python3 pascal_compiler.py 1
 \end{verbatim}
 
-Para compilar o código diretamente para a vm (porta 27018), para quem tem Chrome:
+Para compilar o código diretamente para a vm, para quem tem Chrome:
+\begin{verbatim}
+python3 pascal_compiler.py ../examples/exemplo1.pas -vm https://ewvm.epl.di.uminho.pt
+\end{verbatim}
+
+Ou então:
+
+\begin{verbatim}
+python3 pascal_compiler.py 1 -vm https://ewvm.epl.di.uminho.pt
+\end{verbatim}
+
+Se tiver a vm localmente, para compilar o código diretamente para a vm (porta 27018), para quem tem Chrome:
 \begin{verbatim}
 python3 pascal_compiler.py ../examples/exemplo1.pas -vm
 \end{verbatim}
