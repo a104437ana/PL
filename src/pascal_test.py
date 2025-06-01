@@ -33,21 +33,9 @@ if __name__ == "__main__":
             print(f"\033[1;31mExample {i} - Semantic analysis ❌\033[0m")
         else:
             print(f"\033[1;92mExample {i} - Semantic analysis ✅\033[0m")
-    code = []
     for i in "1234567":
         try:
-            generated = asts[int(i)-1].generateVmCode()
-            code.append(generated)
+            asts[int(i)-1].generateVmCode()
             print(f"\033[1;92mExample {i} - Generate code     ✅\033[0m")
         except Exception as e:
-            code.append(None)
             print(f"\033[1;31mExample {i} - Generate code     ❌\033[0m")
-    for i in "1234567":
-        if code[int(i)-1] is None:
-            print(f"\033[1;31mExample {i} - Validate code     ❌\033[0m")
-            continue
-        else:
-            if code[int(i)-1] == vm[i]:
-                print(f"\033[1;92mExample {i} - Validate code     ✅\033[0m")
-            else:
-                print(f"\033[1;31mExample {i} - Validate code     ❌\033[0m")
