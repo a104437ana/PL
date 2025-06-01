@@ -53,6 +53,7 @@ tokens = [
     'ID',
     'INT',
     'REAL',
+    'CHAR',
     'STRING',
     'COMMENT'
     
@@ -236,7 +237,7 @@ def t_BOOL(t):
     return t
 
 def t_DATATYPE(t):
-    r"([iI][nN][tT][eE][gG][eE][rR]|[rR][eE][aA][lL]|[cC][hH][aA][rR][aA][cC][tT][eE][rR]|[bB][oO][oO][lL][eE][aA][nN]|[sS][tT][rR][iI][nN][gG])\b"
+    r"([iI][nN][tT][eE][gG][eE][rR]|[rR][eE][aA][lL]|[cC][hH][aA][rR]|[bB][oO][oO][lL][eE][aA][nN]|[sS][tT][rR][iI][nN][gG])\b"
     return t
 
 def t_ID(t):
@@ -251,6 +252,10 @@ def t_REAL(t):
 def t_INT(t):
     r'[+-]?\d+'
     t.value = int(t.value)
+    return t
+
+def t_CHAR(t):
+    r"'(.)'"
     return t
 
 def t_STRING(t):

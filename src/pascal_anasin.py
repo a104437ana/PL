@@ -252,7 +252,8 @@ def p_value(p: YaccProduction):
              | BOOL
              | ID '[' INT ']' 
              | ID '[' ID ']'
-             | func_call"""
+             | func_call
+             | CHAR"""
     if p.slice[1].type == "ID":
         if len(p) == 2:
             p[0] = Value(str(p[1]), "id")
@@ -272,6 +273,8 @@ def p_value(p: YaccProduction):
             p[0] = Value(int(0), "bool")
     elif p.slice[1].type == "func_call":
         p[0] = p[1]
+    elif p.slice[1].type == "CHAR":
+        p[0] = Value(str(p[1]),"string")
 
 def p_func_call(p: YaccProduction):
     """func_call : ID '(' args ')'"""
