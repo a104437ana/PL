@@ -8,9 +8,9 @@ if __name__ == "__main__":
     codigo = ""
     if len(sys.argv) < 2:
         if os.isatty(sys.stdin.fileno()):
-            texto = input()
+            codigo = input()
         else:
-            texto = sys.stdin.read()
+            codigo = sys.stdin.read()
     else:
         escolha = sys.argv[1]
         if escolha in exemplos:
