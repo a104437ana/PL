@@ -106,7 +106,7 @@ def t_BEGIN(t):
 
 Nesta expressão regular, cada letra aparece entre colchetes com as duas versões maiúscula e minúscula, o que permite que o reconhecimento seja \emph{case insensitive}, aceitando \texttt{begin}, \texttt{Begin}, \texttt{BEGIN}, etc.
 
-O símbolo \texttt{\\b} representa uma \emph{boundary} (limite de palavra), garantindo que o lexer reconheça apenas a palavra completa \texttt{begin} e não uma parte de outra palavra maior, como \texttt{beginning}
+Temos ainda uma \emph{word boundary} (limite de palavra), garantindo que o lexer reconheça apenas a palavra completa \texttt{begin} e não uma parte de outra palavra maior, como \texttt{beginning}
 
 \section{Literals}
 
@@ -135,17 +135,18 @@ NOT\_EQUAL & LESS\_EQUAL & GREATER\_EQUAL & ASSIGNMENT \\
 RANGE & LPA & ARP & LPP \\
 PRP & BOOL & DATATYPE & ID \\
 INT & REAL & STRING & COMMENT \\
+CHAR \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Os tokens do analisador léxico incluem operadores relacionais como o \texttt{NOT\_EQUAL}, que representa o símbolo de diferente (\texttt{<>}), além do \texttt{LESS\_EQUAL} e \texttt{GREATER\_EQUAL}, correspondentes aos operadores “menor ou igual” (\texttt{<=}) e “maior ou igual” (\texttt{>=}), respectivamente. O token \texttt{ASSIGNMENT} identifica o operador de atribuição usado em Pascal, que é representado por \texttt{:=}. Para representar intervalos, utiliza-se o token \texttt{RANGE}, que corresponde ao símbolo \texttt{..}.
 
-O token \texttt{BOOL} é usado para valores booleanos, como \texttt{true} e \texttt{false}, e o \texttt{DATATYPE} identifica os tipos de dados básicos da linguagem, incluindo \texttt{integer}, \texttt{real}, \texttt{char}, entre outros. Para nomes de variáveis, funções e procedimentos, o token \texttt{ID} é responsável por reconhecer os identificadores.
+O token \texttt{BOOL} é usado para valores booleanos, como \texttt{true} e \texttt{false}, e o \texttt{DATATYPE} identifica os tipos de dados básicos da linguagem, incluindo \texttt{integer}, \texttt{real}, \texttt{char}, \texttt{boolean} e \texttt{string}. Para nomes de variáveis, funções e procedimentos, o token \texttt{ID} é responsável por reconhecer os identificadores.
 
-Números inteiros e reais são capturados pelos tokens \texttt{INT} e \texttt{REAL}, respectivamente, enquanto cadeias de caracteres delimitadas por aspas são reconhecidas pelo token \texttt{STRING}. Por fim, o token \texttt{COMMENT} é utilizado para identificar os comentários no código, que são ignorados durante a compilação.
+Números inteiros e reais são capturados pelos tokens \texttt{INT} e \texttt{REAL}, respectivamente, enquanto cadeias de caracteres delimitadas por aspas são reconhecidas pelo token \texttt{STRING}. Apenas um caracter entre aspas simples será reconhecido pelo token \texttt{CHAR}. Por fim, o token \texttt{COMMENT} é utilizado para identificar os comentários no código, que são ignorados durante a compilação.
 
-Quanto a símbolos delimitadores, temos os tokens \texttt{LPA} e \texttt{ARP}, que correspondem a\texttt{(*} e \texttt{*)}, respectivamente, enquanto \texttt{LPP} e \texttt{PRP} representam \texttt{[} e \texttt{]}.
+Quanto a símbolos delimitadores, temos os tokens \texttt{LPA} e \texttt{ARP}, que correspondem a\texttt{(*} e \texttt{*)}, respectivamente, enquanto \texttt{LPP} e \texttt{PRP} representam \texttt{(.} e \texttt{.)}.
 
 Assim, o analisador léxico, o \texttt{pascal\_analex.py}, transforma o código pascal numa sequência de tokens. Se existir algum caracter ilegal, o lexer irá mostrar onde ocorreu o erro.
 
