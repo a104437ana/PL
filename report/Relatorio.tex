@@ -339,14 +339,22 @@ python3 pascal_compiler.py 1
 
 Ao longo do desenvolvimento do projeto foram realizados testes.
 
-Tanto o analisador léxico, como analisador sintático, semantico como o compilador teem modo interativo, onde podemos testar código pascal.
+Tanto o analisador léxico, como analisador sintático, semantico como o compilador teem os seus próprios programas. Assim, podemos testar cada fase individualmente.
 
-Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise léxica, sintática, semântica e gera código e valida ese mesmo código, isto tudo sobre os códigos em Pascal usados como exemplo no
+Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise léxica, sintática, semântica e gera código, isto tudo sobre os códigos em Pascal usados como exemplo no
 enunciado do projeto.
 
 Havia 7 códigos em Pascal no enunciado. Todos os códigos passam os testes de analise léxica, sintática e semântica porque são programas corretos, sem erros léxicos, sintáticos ou semanticos.
-Código de máquina é gerado para os 7 exemplos. E por fim, validamos o código de máquina gerado. Os exemplos 1 a 6 teem código gerado correto. O único código gerado errado é o do exemplo 7, porque já leva
-em conta as funções, um extra que não implementámos na analise semântica nem a gerar código.
+Código de máquina é gerado para os 7 exemplos.
+
+Para testar se o código máquina gerado corre na máquina virtual e dá o resultado correto, temos de fazer manualmente.
+
+\vspace{1em}
+
+Para correr o teste geral com os 7 exemplos do enunciado fazemos:
+\begin{verbatim}
+python3 pascal_test.py
+\end{verbatim}
 
 \begin{figure}[H]
     \centering
