@@ -29,16 +29,16 @@ O código para construir o relatório está na pasta [report](report).
 ![BUGBUSTERS](report/cover/Bugbusters.png)
 
 ## Utilização - Exemplos
-### Entrar na pasta src
+Entrar na pasta src
 ```
 cd src
 ```
 
-### Compilador
+## Compilador
 
 ...
 
-### Testes
+## Testes
 Para correr o teste geral com os 7 exemplos do enunciado fazemos:
 ```
 python3 pascal_test.py
