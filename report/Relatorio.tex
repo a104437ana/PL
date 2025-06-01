@@ -149,6 +149,23 @@ Quanto a símbolos delimitadores, temos os tokens \texttt{LPA} e \texttt{ARP}, q
 
 Assim, o analisador léxico, o \texttt{pascal\_analex.py}, transforma o código pascal numa sequência de tokens. Se existir algum caracter ilegal, o lexer irá mostrar onde ocorreu o erro.
 
+\vspace{1em}
+
+Se quisermos testar o lexer com o input do terminal:
+\begin{verbatim}
+python3 pascal_analex.py
+\end{verbatim}
+
+Se quisermos testar o lexer com um ficheiro:
+\begin{verbatim}
+python3 pascal_analex.py < ../examples/exemplo1.pas
+\end{verbatim}
+
+Se quisermos testar com um exemplo concreto do enunciado:
+\begin{verbatim}
+python3 pascal_analex.py 1
+\end{verbatim}
+
 \chapter{Análise Sintática}
 
 A análise sintática consistiu em construir um analisador sintático (parser) para validar a estrutura gramatical do código. Para implementar o parser usamos a ferramenta ply.yacc.

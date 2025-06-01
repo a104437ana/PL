@@ -1,4 +1,5 @@
 import sys
+import os
 import ply.lex as lex
 from pascal_exemplos import *
 
@@ -281,7 +282,10 @@ lexer.has_errors = False
 if __name__ == "__main__":
     texto = ""
     if len(sys.argv) < 2:
-        texto = input()
+        if os.isatty(sys.stdin.fileno()):
+            texto = input()
+        else:
+            texto = sys.stdin.read()
     else:
         escolha = sys.argv[1]
         if escolha in exemplos:
