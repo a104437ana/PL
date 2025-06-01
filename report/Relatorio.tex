@@ -35,7 +35,7 @@
 \maketitle
 \begin{abstract}
     Este projeto teve como objetivo o desenvolvimento de um compilador para a linguagem Pascal Standard. O compilador foi construído em várias etapas, começando pela análise léxica, utilizando a biblioteca ply.lex para transformar o código-fonte em uma sequência de tokens. A seguir, foi implementada a análise sintática com ply.yacc, validando a estrutura do programa com base na gramática da linguagem.
-    A partir do código reconhecido, foi construída uma árvore sintática abstrata (AST), que representa de forma estruturada os elementos do programa. Com base nessa AST, foi realizada a análise semântica, incluindo verificação de tipos de dados, declarações de variáveis e coerência do código.
+    A partir do código reconhecido, foi construída uma árvore de sintaxe abstrata (AST), que representa de forma estruturada os elementos do programa. Com base nessa AST, foi realizada a análise semântica, incluindo verificação de tipos de dados, declarações de variáveis e coerência do código.
     Na etapa de geração de código, a AST foi transformada diretamente em código para a máquina virtual do projeto. Para cada etapa, foram realizados testes automáticos com os exemplos de código Pascal fornecidos no enunciado.
 \end{abstract}
 
@@ -60,7 +60,7 @@ Para construir este compilador, tivemos várias etapas:
 \begin{enumerate}
     \item Análise léxica;
     \item Análise sintática;
-    \item Árvore sintática abstrata (AST);
+    \item Árvore de sintaxe abstrata (AST);
     \item Análise semântica;
     \item Geração de código.
 \end{enumerate}
@@ -284,7 +284,103 @@ Se quisermos testar com um exemplo concreto do enunciado:
 python3 pascal_anasin.py 1
 \end{verbatim}
 
-\chapter{Árvore Sintática Abstrata (AST)}
+\chapter{Árvore de Sintaxe Abstrata (AST)}
+
+Durante a fase de análise sintática, à medida que regras de produção são reconhecidas, é possível produzir ações semânticas, uma destas ações consiste em criar uma representação intermédia da estrutura de um programa,
+podendo abstrair detalhes desnecessários da sintaxe, ficando apenas com os elementos essenciais à estrutura e semântica do programa, facilitando assim etapas posteriores de análise semântica e geração de código.
+
+Como o analisador sintático é bottom-up do tipo LALR(1), começa o reconhecimento das folhas para a raíz, facilmente podemos criar uma árvore de sintaxe abstrata à medida que é feito o reconhecimento,
+pois em cada função correspondente a uma regra de produção, o reconhecimento dos seus filhos já foi feito.
+
+Para tal, a partir das regras de produção da gramática, foram identificados os símbolos não terminais essenciais para a definição da estrutura hierárquica em árvore e semântica do programa,
+passando a criar uma classe para cada um destes símbolos identificados, que foram os seguintes:
+
+\vspace{5mm}
+
+\texttt{Program}, constituído por:
+\begin{itemize}
+    \item Declarações, classe \texttt{Declaration};
+    \item Código, classe \texttt{CodeBlock}.
+\end{itemize}
+
+\vspace{5mm}
+
+\texttt{Variable}, classe com informação de uma variável.
+
+\vspace{5mm}
+
+\texttt{Declaration}, classe abstrata contendo:
+\begin{itemize}
+    \item \texttt{Variables}, constituída por:
+    \begin{itemize}
+        \item Lista de classes \texttt{Variable}.
+    \end{itemize}
+    \item \texttt{Function}, com informação relevante da função e constituída por:
+    \begin{itemize}
+        \item Variáveis locais, classe \texttt{Variables};
+        \item Variáveis de parâmetros, classe \texttt{Variables};
+        \item Código da função, classe \texttt{CodeBlock}.
+    \end{itemize}
+    \item \texttt{Procedure}, com informação relevante do procedimento e constituída por:
+    \begin{itemize}
+        \item Variáveis locais, classe \texttt{Variables};
+        \item Variáveis de parâmetros, classe \texttt{Variables};
+        \item Código do procedimento, classe \texttt{CodeBlock}.
+    \end{itemize}
+\end{itemize}
+
+\vspace{5mm}
+
+\texttt{Algorithm}, classe constituída por:
+\begin{itemize}
+    \item Lista de classes \texttt{Statement}.
+\end{itemize}
+
+\vspace{5mm}
+
+\texttt{Statement}, classe abstrata contendo:
+\begin{itemize}
+    \item \texttt{Assignment}, com informação relevante de uma atribuição, constituída por:
+    \begin{itemize}
+        \item Expressão, classe \texttt{Expression}.
+    \end{itemize}
+    \item \texttt{Loop}, com informação relevante de cada tipo de ciclo, constituída por:
+    \begin{itemize}
+        \item Condição, classe \texttt{Expression};
+        \item Lista de classe \texttt{Statement};
+        \item Atribuição, no caso de um ciclo \texttt{for}, classe \texttt{Assignment}.
+    \end{itemize}
+    \item \texttt{If}, com informação relevante de cada tipo de condicional, constituída por:
+    \begin{itemize}
+        \item Condição, classe \texttt{Expression};
+        \item Para a condição verdadeira, lista de classes \texttt{Statement};
+        \item Para a condição falsa, no caso de um \texttt{else}, lista de classes \texttt{Statement}.
+    \end{itemize}
+    \item \texttt{CodeBlock}, constituída por:
+    \begin{itemize}
+        \item Algoritmo, classe \texttt{Algorithm}.
+    \end{itemize}
+\end{itemize}
+
+\vspace{5mm}
+
+\texttt{Expression}, classe abstrata contendo:
+\begin{itemize}
+    \item \texttt{BinaryOp}, operações binárias, para além do operador, constituída por:
+    \begin{itemize}
+        \item Lado esquerdo da operação, classe \texttt{Expression};
+        \item Lado direito da operação, classe \texttt{Expression}.
+    \end{itemize}
+    \item \texttt{UnaryOp}, operações unárias, para além do operador, constituída por:
+    \begin{itemize}
+        \item Expressão, classe \texttt{Expression}.
+    \end{itemize}
+    \item \texttt{Value}, com informação relevante de um valor, como um número ou variável.
+    \item \texttt{FunctionCall}, com informação relevante de uma chamada de função, constituída por:
+    \begin{itemize}
+        \item Lista de argumentos, classes \texttt{Value} ou \texttt{FunctionCall}.
+    \end{itemize}
+\end{itemize}
 
 \textcolor{red}{\textbf{TODO}}
 
@@ -320,7 +416,14 @@ python3 pascal_anasem.py 1
 
 \chapter{Geração de Código}
 
-\textcolor{red}{\textbf{TODO}}
+Após feita a análise semântica do programa, podemos passar à fase final deste pipeline: a geração de código vm a partir da definição estrutural e lógica criada do programa.
+Para tal foi necessário perceber como funciona o ambiente virtual de código máquina, para o qual teríamos de converter a estrutura de representação abstrata criada, ou seja,
+quais as operações suportadas pela vm, como funciona o seu o modelo de memória, de forma a compreender como fazer o acesso e armazenamento de variáveis e também como é feito o mecanismo de controlo
+para que possamos implementar estruturas de controlo como ciclos e condicionais.
+
+Após esta análise foram, progressivamente, implementadas e testadas as conversões de cada classe para a geração de código, de forma a garantir o seu correto funcionamento, começando por classes estruturais
+como os blocos estruturais de um programa, por exemplo as declarações de variáveis, passando assim a poder definir atribuições simples, progressivamente integrando com operações binárias, dando assim possibilidade
+de passar para classes mais complexas com estruturas de controlo condicional, até chegar à conversão de todas as classes estruturais definidas.
 
 
 
@@ -381,7 +484,7 @@ python3 pascal_test.py
 
 Concluindo, conseguimos alcançar o objetivo principal deste projeto: construir um compilador para a linguagem Pascal Standard, que transforme código Pascal em código da máquina virtual.
 O nosso compilador é capaz de processar programas Pascal standart com declarações de variáveis, expressões aritméticas, comandos de controle de fluxo (if, while, for) e funções. Para além disto,
-seguimos as etapas do projeto: construímos um analisador léxico, um analisador sintático, fizemos uma árvore sintática abstrata, fizemos um analisador semântico, geramos o código desejado
+seguimos as etapas do projeto: construímos um analisador léxico, um analisador sintático, fizemos uma árvore de sintaxe abstrata, fizemos um analisador semântico, geramos o código desejado
 e ainda fizemos testes de tudo isto, para garantir a correção de todos estes programas. Também testamos manualmente se os programas corriam como previsto na máquina virtual.
 
 \vspace{1em}
