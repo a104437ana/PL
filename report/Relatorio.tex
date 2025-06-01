@@ -51,15 +51,16 @@ pretendeu-se implementar um compilador capaz de analisar, interpretar e traduzir
 intermediário e deste para código máquina ou diretamente para código máquina, neste caso da VM
 disponibilizada aos alunos. A equipa optou por primeiro passar o código Pascal para um formato intermediário e só depois passar deste para código máquina.
 O compilador deve ser capaz de processar programas Pascal standard, incluindo declaração de variáveis,
-expressões aritméticas e comandos de controle de fluxo (if, while, for).
+expressões aritméticas e comandos de controle de fluxo (if, while, for), e, opcionalmente, subprogramas
+(procedure e function).
 
 \vspace{1em}
 
-Para construir este compilador, houveram várias etapas:
+Para construir este compilador, tivemos várias etapas:
 \begin{enumerate}
     \item Análise léxica;
     \item Análise sintática;
-    \item Árvore sintática abstrata (ATS);
+    \item Árvore sintática abstrata (AST);
     \item Análise semântica;
     \item Geração de código.
 \end{enumerate}
@@ -93,7 +94,9 @@ var & while & with & \\
 
 Cada palavra reservada resulta num token que definimos.
 
-Por exemplo o token BEGIN (palavra reservada begin) definimos da seguinte forma:
+\vspace{1em}
+
+Por exemplo, o token BEGIN (palavra reservada begin) definimos da seguinte forma:
 
 \begin{verbatim}
 def t_BEGIN(t):
@@ -103,7 +106,7 @@ def t_BEGIN(t):
 
 Nesta expressão regular, cada letra aparece entre colchetes com as duas versões maiúscula e minúscula, o que permite que o reconhecimento seja \emph{case insensitive}, aceitando \texttt{begin}, \texttt{Begin}, \texttt{BEGIN}, etc.
 
-O símbolo \texttt{\b} representa uma \emph{boundary} (limite de palavra), garantindo que o lexer reconheça apenas a palavra completa \texttt{begin} e não uma parte de outra palavra maior, como \texttt{beginning}
+O símbolo \texttt{\\b} representa uma \emph{boundary} (limite de palavra), garantindo que o lexer reconheça apenas a palavra completa \texttt{begin} e não uma parte de outra palavra maior, como \texttt{beginning}
 
 \section{Literals}
 
