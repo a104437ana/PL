@@ -1,10 +1,16 @@
 # variáveis globais da ast
 global_vars = {}        # dicionário ID -> posição no global pointer
 global_vars_type = {}   # dicionário ID -> tipo da variável
-known_functions = {}
+known_functions = {}    # dicionário ID -> posição do retorno no global pointer
+func_types = {}         # dicionário ID -> tipo de retorno da função
 array_init = {}         # dicionário ID -> posição inicial do array
 array_type = {}         # dicionário ID -> tipo do array
 last_global_pointer = 0 # última posição do global pointer
+local_scope = ""        # função ou procedimento onde está
+func_params = {}        # dicionário ID -> posição no stack pointer
+func_vars = {}          # dicionário ID -> posição no stack pointer
+func_vars_type = {}     # dicionário ID -> tipo da variável
+func_vars_number = {}   # dicionário ID -> número de variáveis da função
 
 # metodos globais da ast
 
@@ -22,14 +28,16 @@ class Program:
             if isinstance(decl, Variables):
                 code += f"\n{decl.generateVmCodePush()}"
                 heap += f"\n{decl.generateVmCodeHeap()}"
-            elif isinstance(decl, Function):
-                code += f"\n" # ver como fazer
-            elif isinstance(decl, Procedure):
-                code += f"\n" # ver como fazer
         code += f"\nSTART\n"
         code += f"{heap}\n"
         code += f"{self.code.generateVmCode()}"
-        code += f"STOP"
+        code += f"STOP\n\n"
+        for decl in self.declarations:
+            if isinstance(decl, Function):
+                code += f"{decl.generateVmCode()}\n"
+            elif isinstance(decl, Procedure):
+                code += f"\n" # ver como fazer
+
         return code
     
     def anasem(self):
@@ -89,13 +97,21 @@ class Variable():
 
     def generateVmCodeHeap(self):
         code = ""
-        global global_vars, array_init, array_type
-        var_pointer = global_vars[str(self.id)]
-        array_init[self.id] = self.array_init
-        array_type[self.id] = self.array_type
-        code += f"PUSHI {self.array_size}\n"
-        code += "ALLOCN\n"
-        code += f"STOREG {var_pointer}\n"
+        global global_vars, array_init, array_type, func_vars, local_scope
+        if local_scope == "":
+            var_pointer = global_vars[str(self.id)]
+            array_init[self.id] = self.array_init
+            array_type[self.id] = self.array_type
+            code += f"PUSHI {self.array_size}\n"
+            code += "ALLOCN\n"
+            code += f"STOREG {var_pointer}\n"
+        else:
+            var_pointer = func_vars[str(self.id)]
+            array_init[self.id] = self.array_init
+            array_type[self.id] = self.array_type
+            code += f"PUSHI {self.array_size}\n"
+            code += "ALLOCN\n"
+            code += f"STOREL {var_pointer}\n"
         return code
 
     def __str__(self):
@@ -133,13 +149,16 @@ class Variables(Declaration):
         return ""
 
     def generateVmCodePush(self):
-        global last_global_pointer, global_vars, global_vars_type
+        global last_global_pointer, global_vars, global_vars_type, local_scope
         code = ""
         for id, var in self.variables.items():
-            code += var.generateVmCodePush() + f" // variavel {var.id}\n"
-            global_vars[var.id] = last_global_pointer
-            global_vars_type[var.id] = var.type
-            last_global_pointer += 1
+            if local_scope == "":
+                code += var.generateVmCodePush() + f" // variavel {var.id}\n"
+                global_vars[var.id] = last_global_pointer
+                global_vars_type[var.id] = var.type
+                last_global_pointer += 1
+        if local_scope != "":
+            code += f"PUSHN {len(self.variables)}\n"
         return code
 
     def generateVmCodeHeap(self):
@@ -149,6 +168,27 @@ class Variables(Declaration):
                 code += f"// heap variavel {var.id}\n"
                 code += f"{var.generateVmCodeHeap()}"
         return code
+
+    def funcProcVars(self, idFunc):
+        global func_vars, func_vars_type
+        last_stack_pointer = 0
+        func_vars[idFunc] = {}
+        func_vars_type[idFunc] = {}
+        for id, var in self.variables.items():
+            func_vars[idFunc][var.id] = last_stack_pointer
+            func_vars_type[idFunc][var.id] = var.type
+            last_stack_pointer += 1
+
+    def funcProcParams(self, idFunc):
+        global func_params
+        last_stack_pointer = -len(self.variables)
+        for id, var in self.variables.items():
+            func_vars[idFunc][var.id] = last_stack_pointer
+            func_vars_type[idFunc][var.id] = var.type
+            last_stack_pointer += 1
+
+    def isVariable(self, id):
+        return id in self.variables.keys()
 
     def __str__(self):
         if len(self.variables.items()) > 0:
@@ -178,9 +218,28 @@ class Function(Declaration):
         self.return_type = return_type      # tipo de retorno
         self.vars = vars                    # classe Variables com as variáveis da função
         self.algorithm = algorithm          # classe CodeBlock
+        global last_global_pointer, known_functions, func_vars_number
+        known_functions[str(self.id).lower()] = last_global_pointer
+        func_types[str(self.id).lower()] = self.return_type
+        last_global_pointer += 1
+        self.vars.funcProcVars(str(self.id).lower())
+        self.parameters.funcProcParams(str(self.id).lower())
+        func_vars_number[str(self.id).lower()] = len(self.vars.variables)
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        heap = ""
+        global local_scope
+        local_scope = str(self.id).lower()
+        code += f"{local_scope}:\n"
+        code += f"\n{self.vars.generateVmCodePush()}"
+        heap += f"\n{self.vars.generateVmCodeHeap()}"
+        code += f"{heap}\n"
+        code += f"{self.algorithm.generateVmCode()}"
+        code += f"RETURN\n"
+        local_scope = ""
+
+        return code
 
     def __str__(self):
         func = f"function {self.id}({self.parameters.strParams()}): {self.return_type};\n"
@@ -196,9 +255,25 @@ class Procedure(Declaration):
         self.parameters = parameters    # classe Variables com as variáveis dos parametros
         self.vars = vars                # classe Variables com as variáveis da função
         self.algorithm = algorithm      # classe CodeBlock
+        global known_functions, func_vars_number
+        known_functions[str(self.id).lower()] = -1
+        func_types[str(self.id).lower()] = "none"
+        func_vars_number[str(self.id).lower()] = len(self.vars.variables)
 
     def generateVmCode(self):
-        return ""
+        code = ""
+        heap = ""
+        global local_scope
+        local_scope = str(self.id).lower()
+        code += f"{local_scope}:\n"
+        code += f"\n{self.vars.generateVmCodePush()}"
+        heap += f"\n{self.vars.generateVmCodeHeap()}"
+        code += f"{heap}\n"
+        code += f"{self.algorithm.generateVmCode()}"
+        code += f"RETURN\n"
+        local_scope = ""
+
+        return code
 
     def __str__(self):
         proc = f"procedure {self.id}({self.parameters.strParams()});\n"
@@ -268,19 +343,33 @@ class Assignment(Statement):
 
     def generateVmCode(self):
         code = ""
-        global global_vars, global_vars_type, array_init
-        var_pointer = global_vars[str(self.id)]
-        var_type = global_vars_type[str(self.id)]
+        global global_vars, global_vars_type, array_init, func_vars, func_vars_type, local_scope
+        if local_scope == "":
+            var_pointer = global_vars[str(self.id)]
+            var_type = global_vars_type[str(self.id)]
+            scope = "G"
+        else:
+            if str(self.id).lower() == local_scope:
+                var_pointer = known_functions[str(self.id).lower()]
+                var_type = func_types[str(self.id).lower()]
+                scope = "G"
+            else:
+                var_pointer = func_vars[local_scope][str(self.id)]
+                var_type = func_vars_type[local_scope][str(self.id)]
+                scope = "L"
         if var_type != "array":
             code += self.expr.generateVmCode()
-            code += f"STOREG {var_pointer}\n"
+            code += f"STORE{scope} {var_pointer}\n"
         elif var_type == "array":
             init = array_init[self.id]
-            code += f"PUSHG {var_pointer}\n"
+            code += f"PUSH{scope} {var_pointer}\n"
             pos = f"PUSHI {self.array_pos}\n"
             if self.pos_type == "id":
-                id_pointer = global_vars[str(self.array_pos)]
-                pos = f"PUSHG {id_pointer}\n"
+                if str(self.array_pos) in global_vars.keys():
+                    id_pointer = global_vars[str(self.array_pos)]
+                elif str(self.array_pos) in func_vars[local_scope].keys():
+                    id_pointer = func_vars[local_scope][str(self.array_pos)]
+                pos = f"PUSH{scope} {id_pointer}\n"
             code += pos
             code += f"PUSHI {init}\n"
             code += "SUB\n"
@@ -333,11 +422,16 @@ class Loop(Statement):
             code += f"JUMP LOOP{self.loopID}\n"
             code += f"ENDLOOP{self.loopID}:\n"
         elif self.loop_type == "for":
-            global global_vars
-            var_pointer = global_vars[self.assignment.id]
+            global global_vars, func_vars, func_vars_type, local_scope
+            if local_scope == "":
+                var_pointer = global_vars[self.assignment.id]
+                scope = "G"
+            else:
+                var_pointer = func_vars[local_scope][self.assignment.id]
+                scope = "L"
             code += self.assignment.generateVmCode()
             code += f"LOOP{self.loopID}:\n"
-            code += f"PUSHG {var_pointer}\n"
+            code += f"PUSH{scope} {var_pointer}\n"
             code += self.cond.generateVmCode()
             if self.for_type == "to":
                 code += "INFEQ\n"
@@ -345,13 +439,13 @@ class Loop(Statement):
                 code += "SUPEQ\n"
             code += f"JZ ENDLOOP{self.loopID}\n"
             code += self.statement.generateVmCode()
-            code += f"PUSHG {var_pointer}\n"
+            code += f"PUSH{scope} {var_pointer}\n"
             code += "PUSHI 1\n"
             if self.for_type == "to":
                 code += "ADD\n"
             elif self.for_type == "downto":
                 code += "SUB\n"
-            code += f"STOREG {var_pointer}\n"
+            code += f"STORE{scope} {var_pointer}\n"
             code += f"JUMP LOOP{self.loopID}\n"
             code += f"ENDLOOP{self.loopID}:\n"
         return code
@@ -786,7 +880,11 @@ class Value(Expression):
 
     def generateVmCode(self):
         code = ""
-        global global_vars, global_vars_type, array_init
+        global global_vars, global_vars_type, array_init, func_vars, func_vars_type, local_scope
+        if local_scope == "":
+            scope = "G"
+        else:
+            scope = "L"
         if self.type == "int":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "real":
@@ -799,31 +897,44 @@ class Value(Expression):
         elif self.type == "bool":
             code += f"PUSHI {int(self.value)}\n"
         elif self.type == "id":
-            if str(self.value) in global_vars.keys():
+
+            if local_scope == "":
                 var_pointer = global_vars[str(self.value)]
-                code += f"PUSHG {var_pointer}\n"
+                scope = "G"
             else:
-                pass  ######## Erro
+                var_pointer = func_vars[local_scope][str(self.value)]
+                scope = "L"
+            code += f"PUSH{scope} {var_pointer}\n"
+
         elif self.type == "array":
-            var_pointer = global_vars[str(self.value)]
-            var_type = global_vars_type[str(self.value)]
+            if local_scope == "":
+                var_pointer = global_vars[str(self.value)]
+                var_type = global_vars_type[str(self.value)]
+            else:
+                var_pointer = func_vars[local_scope][str(self.value)]
+                var_type = func_vars_type[local_scope][str(self.value)]
             if var_type == "string":
-                code += f"PUSHG {var_pointer}\n"
+                code += f"PUSH{scope} {var_pointer}\n"
                 pos = f"PUSHI {self.array_pos}\n"
                 if self.pos_type == "id":
-                    id_pointer = global_vars[str(self.array_pos)]
-                    pos = f"PUSHG {id_pointer}\n"
+                    if local_scope == "":
+                        id_pointer = global_vars[str(self.array_pos)]
+                        scope = "G"
+                    else:
+                        id_pointer = func_vars[local_scope][str(self.array_pos)]
+                        scope = "L"
+                    pos = f"PUSH{scope} {id_pointer}\n"
                 code += pos
                 code += f"PUSHI 1\n"
                 code += "SUB\n"
                 code += "CHARAT\n"
             else:
                 init = array_init[self.value]
-                code += f"PUSHG {var_pointer}\n"
+                code += f"PUSH{scope} {var_pointer}\n"
                 pos = f"PUSHI {self.array_pos}\n"
                 if self.pos_type == "id":
                     id_pointer = global_vars[str(self.array_pos)]
-                    pos = f"PUSHG {id_pointer}\n"
+                    pos = f"PUSH{scope} {id_pointer}\n"
                 code += pos
                 code += f"PUSHI {init}\n"
                 code += "SUB\n"
@@ -833,15 +944,23 @@ class Value(Expression):
 
     def generateVmCodeArray(self):
         code = ""
-        global global_vars, global_vars_type, array_init
+        global global_vars, global_vars_type, array_init, func_vars, func_vars_type, local_scope
         if self.type == "array":
-            var_pointer = global_vars[str(self.value)]
+            if local_scope == "":
+                var_pointer = global_vars[str(self.value)]
+                scope = "G"
+            else:
+                var_pointer = func_vars[local_scope][str(self.value)]
+                scope = "L"
             init = array_init[self.value]
-            code += f"PUSHG {var_pointer}\n"
+            code += f"PUSH{scope} {var_pointer}\n"
             pos = f"PUSHI {self.array_pos}\n"
             if self.pos_type == "id":
-                id_pointer = global_vars[str(self.array_pos)]
-                pos = f"PUSHG {id_pointer}\n"
+                if local_scope == "":
+                    id_pointer = global_vars[str(self.array_pos)]
+                else:
+                    id_pointer = func_vars[local_scope][str(self.array_pos)]
+                pos = f"PUSH{scope} {id_pointer}\n"
             code += pos
             code += f"PUSHI {init}\n"
             code += "SUB\n"
@@ -865,12 +984,16 @@ class FunctionCall(Expression):
         
     def generateVmCode(self):
         code = ""
-        global global_vars, global_vars_type, array_type
+        global global_vars, global_vars_type, array_type, func_vars, func_vars_type, local_scope
         if self.id == "writeln" or self.id == "write":
             for arg in self.args:
                 try:
-                    var_pointer = global_vars[str(arg)]
-                    var_type = global_vars_type[str(arg)]
+                    if local_scope == "":
+                        var_pointer = global_vars[str(arg)]
+                        var_type = global_vars_type[str(arg)]
+                    else:
+                        var_pointer = func_vars[local_scope][str(arg)]
+                        var_type = func_vars_type[local_scope][str(arg)]
                 except:
                     var_pointer = None
                     var_type = None
@@ -914,8 +1037,14 @@ class FunctionCall(Expression):
                 code += "WRITELN\n"
         elif self.id == "readln":
             try:
-                var_pointer = global_vars[str(self.args[0])]
-                var_type = global_vars_type[str(self.args[0])]
+                if local_scope == "":
+                    var_pointer = global_vars[str(self.args[0])]
+                    var_type = global_vars_type[str(self.args[0])]
+                    scope = "G"
+                else:
+                    var_pointer = func_vars[local_scope][str(self.args[0])]
+                    var_type = func_vars_type[local_scope][str(self.args[0])]
+                    scope = "L"
             except:
                 var_pointer = None
                 var_type = None
@@ -934,13 +1063,33 @@ class FunctionCall(Expression):
             if is_array:
                 code += "STOREN\n"
             else:
-                code += f"STOREG {var_pointer}\n"
+                code += f"STORE{scope} {var_pointer}\n"
         elif self.id == "length":
-            var_pointer = global_vars[str(self.args[0])]
-            var_type = global_vars_type[str(self.args[0])]
+            if local_scope == "":
+                var_pointer = global_vars[str(self.args[0])]
+                var_type = global_vars_type[str(self.args[0])]
+                scope = "G"
+            else:
+                var_pointer = func_vars[local_scope][str(self.args[0])]
+                var_type = func_vars_type[local_scope][str(self.args[0])]
+                scope = "L"
             if var_type == "string":
-                code += f"PUSHG {var_pointer}\n"
+                code += f"PUSH{scope} {var_pointer}\n"
                 code += f"STRLEN\n"
+        else:
+            global known_functions, func_vars_number
+            if str(self.id).lower() in known_functions.keys():
+                func_pos = known_functions[str(self.id).lower()]
+                number_vars = func_vars_number[str(self.id).lower()]
+                for arg in self.args:
+                    code += arg.generateVmCode()
+                code += f"PUSHA {self.id}\n"
+                code += "CALL\n"
+                if func_pos == -1:
+                    code += f"POP {len(self.args) + number_vars}\n"
+                else:
+                    code += f"POP {len(self.args) + number_vars}\n"
+                    code += f"PUSHG {func_pos}\n"
         return code
 
     def __str__(self):
