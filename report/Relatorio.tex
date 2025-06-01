@@ -244,7 +244,11 @@ O primeiro passo consiste em definir uma gramática da linguagem:
 \textbf{p83:} \> elems \(\to\) cond \\
 \end{tabbing}
 
-\textcolor{red}{\textbf{TODO}}
+\section{Analisador Sintático}
+Definida a gramática a utilizar, implementamos o programa \texttt{pascal\_anasin.py} que define funções para reconhecer as várias produções da gramática, utilizando o ply.yacc.
+Assim, para cada símbolo não terminal definido, temos um método que define as produções que derivam nesse símbolo e efetua as ações semânticas necessárias.
+Neste caso, como estamos a criar uma AST, a única ação semântica a realizar é ir construíndo a árvore, conforme se reconhecem símbolos essenciais para a gramática concreta que definimos, explicada melhor na secção seguinte.
+Algo a resaltar, por diferir um pouco do que fizemos nas aulas é a definição de precedências no caso do \texttt{if} e \texttt{else}, para evitar um conflito de shift/reduce.
 
 \chapter{Árvore Sintática Abstrata (AST)}
 

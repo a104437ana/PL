@@ -106,7 +106,7 @@ def p_parameter(p: YaccProduction):
     """
     parameter : VAR_opt id_list ':' DATATYPE
     """
-    vars = Variables() ####################################### falta ver se é preciso var opt
+    vars = Variables()
     if len(p) == 5:
         for id in p[2]:
             vars.add(Variable(id, str(p[4]).lower()))
