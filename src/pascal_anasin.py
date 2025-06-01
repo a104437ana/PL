@@ -1,4 +1,5 @@
 import sys
+import os
 import ply.yacc as yacc
 from ply.yacc import YaccProduction
 from pascal_analex import tokens, literals
@@ -310,7 +311,10 @@ parser.has_errors = False
 if __name__ == "__main__":
     texto = ""
     if len(sys.argv) < 2:
-        texto = input()
+        if os.isatty(sys.stdin.fileno()):
+            texto = input()
+        else:
+            texto = sys.stdin.read()
     else:
         escolha = sys.argv[1]
         if escolha in exemplos:

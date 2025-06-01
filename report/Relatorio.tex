@@ -267,6 +267,23 @@ Assim, para cada símbolo não terminal definido, temos um método que define as
 Neste caso, como estamos a criar uma AST, a única ação semântica a realizar é ir construíndo a árvore, conforme se reconhecem símbolos essenciais para a gramática concreta que definimos, explicada melhor na secção seguinte.
 Algo a ressaltar, por diferir um pouco do que fizemos nas aulas é a definição de precedências no caso do \texttt{if} e \texttt{else}, para evitar um conflito de shift/reduce.
 
+\vspace{1em}
+
+Se quisermos testar o parser com o input do terminal:
+\begin{verbatim}
+python3 pascal_anasin.py
+\end{verbatim}
+
+Se quisermos testar o parser com um ficheiro:
+\begin{verbatim}
+python3 pascal_anasin.py < ../examples/exemplo1.pas
+\end{verbatim}
+
+Se quisermos testar com um exemplo concreto do enunciado:
+\begin{verbatim}
+python3 pascal_anasin.py 1
+\end{verbatim}
+
 \chapter{Árvore Sintática Abstrata (AST)}
 
 \textcolor{red}{\textbf{TODO}}

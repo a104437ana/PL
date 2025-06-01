@@ -2,11 +2,15 @@ from pascal_anasin import parser
 from pascal_analex import tokens, literals, lexer
 from pascal_exemplos import *
 import sys
+import os
 
 if __name__ == "__main__":
     codigo = ""
     if len(sys.argv) < 2:
-        codigo = input()
+        if os.isatty(sys.stdin.fileno()):
+            texto = input()
+        else:
+            texto = sys.stdin.read()
     else:
         escolha = sys.argv[1]
         if escolha in exemplos:
