@@ -399,9 +399,9 @@ Em concreto, na análise semântica:
     \item não permitimos que se use variáveis que não tenham sido declaradas antes (dá erro);
     \item verificamos, quando se atribui uma variável a uma expressão, que ambas teem o mesmo tipo;
     \item verificamos o tipo dos operadores numa operação e vemos se são os adequados, por exemplo, não é adequado comparar uma string e um integer;
-    \item verificamos se as expressões usadas em comandos de controlo de fluxo if e while são booleanas;
-    \item não permitimos ter procedures writeln, write ou readln no meio de expressões aritméticas ou lógicas, uma vez que estas não retornam valor;
-    \item verificamos se no for depois do TO ou do DOWNTO se temos um valor do tipo inteiro, ou uma expressão aritmética.
+    \item verificamos se as expressões usadas em comandos de controlo de fluxo \texttt{if} e \texttt{while} são booleanas;
+    \item não permitimos ter procedures \texttt{writeln}, \texttt{write} ou \texttt{readln} no meio de expressões aritméticas ou lógicas, uma vez que estes não retornam valor;
+    \item verificamos se no \texttt{for}, depois do \texttt{TO} ou do \texttt{DOWNTO}, temos um valor do tipo inteiro, ou uma expressão aritmética.
 \end{enumerate}
 
 \vspace{1em}
