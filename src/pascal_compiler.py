@@ -20,7 +20,10 @@ if __name__ == "__main__":
             print(exemplos[escolha])
             codigo = exemplos[escolha]
     elif (len(sys.argv)==1):
-        codigo = input()
+        if os.isatty(sys.stdin.fileno()):
+            codigo = input()
+        else:
+            codigo = sys.stdin.read()
     else:
         print("Incorrect arguments")
         print("py pascal_compiler.py <input file>")

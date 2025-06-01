@@ -331,9 +331,24 @@ Se quisermos testar o compilador com o input do terminal:
 python3 pascal_compiler.py
 \end{verbatim}
 
+Se quisermos testar com um ficheiro:
+\begin{verbatim}
+python3 pascal_compiler.py < ../examples/exemplo1.pas
+\end{verbatim}
+
+Se quisermos ter um ficheiro de input com o código Pascal e um ficheiro de output com código da máquina virtual (o ficheiro vai para a pasta out):
+\begin{verbatim}
+python3 pascal_compiler.py ../examples/exemplo1.pas exemplo1.vm
+\end{verbatim}
+
 Se quisermos testar com um exemplo concreto do enunciado:
 \begin{verbatim}
 python3 pascal_compiler.py 1
+\end{verbatim}
+
+Para compilar o código diretamente para a vm (porta 27018), para quem tem Chrome:
+\begin{verbatim}
+python3 pascal_compiler.py ../examples/exemplo1.pas -vm
 \end{verbatim}
 \chapter{Testes}
 
