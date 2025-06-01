@@ -4,6 +4,7 @@
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{float} 
 \usepackage[pdftex]{hyperref}
 \usepackage{titling}
 \usepackage{amsmath}
@@ -56,11 +57,11 @@ expressões aritméticas e comandos de controle de fluxo (if, while, for).
 
 Para construir este compilador, houveram várias etapas:
 \begin{enumerate}
-    \item Análise léxica
-    \item Análise sintática
-    \item Árvore sintática abstrata (ATS)
-    \item Análise semântica
-    \item Geração de código
+    \item Análise léxica;
+    \item Análise sintática;
+    \item Árvore sintática abstrata (ATS);
+    \item Análise semântica;
+    \item Geração de código.
 \end{enumerate}
 
 Para além dessas etapas, foi também necessário realizar testes, os quais foram conduzidos de forma contínua ao longo do desenvolvimento.
@@ -245,9 +246,16 @@ O primeiro passo consiste em definir uma gramática da linguagem:
 
 \chapter{Análise Semântica}
 
-A análise semântica consistiu em verificar tipos de dados, declaração de variáveis e coerência do código. Para o fazer, percorremos a AST e fomos guardando algumas informações.
+A análise semântica consistiu em verificar tipos de dados, declaração de variáveis e coerência do código. Para o fazer, percorremos a AST e fomos guardando algumas informações
+e verificando outras.
 
-Em concreto, na análise semântica 
+Em concreto, na análise semântica:
+\begin{enumerate}
+    \item não permitimos que se use variáveis que não tenham sido declaradas antes (dá erro);
+    \item verificamos quando se atribui uma variável a uma expressão, que ambas teem o mesmo tipo;
+    \item verificamos o tipo dos operadores numa operação e vemos se são os adequados.
+    \item ...
+\end{enumerate}
 
 \chapter{Geração de Código}
 
@@ -259,8 +267,18 @@ Ao longo do desenvolvimento do projeto foram realizados testes.
 
 Tanto o analisador léxico, como analisador sintático, semantico como o compilador teem modo interativo, onde podemos testar código pascal.
 
+Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise léxica, sintática, semântica e gera código e valida ese mesmo código, isto tudo sobre os códigos em Pascal usados como exemplo no
+enunciado do projeto.
 
-Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise sintática,
+Havia 7 códigos em Pascal no enunciado. Todos os códigos passam os testes de analise léxica, sintática e semântica porque são programas corretos, sem erros léxicos, sintáticos ou semanticos.
+Código de máquina é gerado para os 7 exemplos. E por fim, validamos o código de máquina gerado. Os exemplos 1 a 6 teem código gerado correto. O único código gerado errado é o do exemplo 7, porque já leva
+em conta as funções, um extra que não implementámos na analise semântica nem a gerar código.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{images/tests.png}
+    \caption{Testes automáticos.}    
+\end{figure}
 
 \chapter{Conclusão}
 

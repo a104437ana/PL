@@ -25,7 +25,7 @@ O código desenvolvido pode ser encontrado na pasta [src](src).
 
 Correr o compilador de uma das seguintes formas
 
-* Para compilar o código diretamente para a vm (porta 27018):
+* Para compilar o código diretamente para a vm (porta 27018), para quem tem Chrome:
 
 ```bash
     $ py pascal_compiler.py <ficheiro pascal> -vm
