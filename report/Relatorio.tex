@@ -426,7 +426,21 @@ Após esta análise foram, progressivamente, implementadas e testadas as convers
 como os blocos estruturais de um programa, por exemplo as declarações de variáveis, passando assim a poder definir atribuições simples, progressivamente integrando com operações binárias, dando assim possibilidade
 de passar para classes mais complexas com estruturas de controlo condicional, até chegar à conversão de todas as classes estruturais definidas.
 
+\vspace{1em}
 
+\chapter{Testes}
+
+Ao longo do desenvolvimento do projeto foram realizados vários testes.
+
+Tanto o analisador léxico, como o analisador sintático, o semântico e o compilador teem os seus próprios programas. Assim, podemos testar cada fase individualmente.
+
+Fizemos ainda o \texttt{pascal\_test.py} que faz a analise léxica, sintática, semântica e gera código, isto tudo sobre os programas em Pascal usados como exemplo no
+enunciado do projeto.
+
+Havia 7 programas em Pascal no enunciado. Todos os programas passam os testes de analise léxica, sintática e semântica porque são programas corretos, sem erros léxicos, sintáticos ou semânticos.
+É gerado código máquina  para os 7 exemplos.
+
+Para testar se o código máquina gerado é executável na máquina virtual e dá o resultado correto, temos de testar manualmente.
 
 \vspace{1em}
 
@@ -454,21 +468,6 @@ Para compilar o código diretamente para a vm (porta 27018), para quem tem Chrom
 \begin{verbatim}
 python3 pascal_compiler.py ../examples/exemplo1.pas -vm
 \end{verbatim}
-\chapter{Testes}
-
-Ao longo do desenvolvimento do projeto foram realizados testes.
-
-Tanto o analisador léxico, como analisador sintático, semantico como o compilador teem os seus próprios programas. Assim, podemos testar cada fase individualmente.
-
-Mas ainda fizemos o \texttt{pascal\_test.py} que faz a analise léxica, sintática, semântica e gera código, isto tudo sobre os códigos em Pascal usados como exemplo no
-enunciado do projeto.
-
-Havia 7 códigos em Pascal no enunciado. Todos os códigos passam os testes de analise léxica, sintática e semântica porque são programas corretos, sem erros léxicos, sintáticos ou semanticos.
-Código de máquina é gerado para os 7 exemplos.
-
-Para testar se o código máquina gerado corre na máquina virtual e dá o resultado correto, temos de fazer manualmente.
-
-\vspace{1em}
 
 Para correr o teste geral com os 7 exemplos do enunciado fazemos:
 \begin{verbatim}
