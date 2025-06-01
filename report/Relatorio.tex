@@ -197,48 +197,51 @@ O primeiro passo consiste em definir uma gramática da linguagem:
 \textbf{p36:} \> if \(\to\) IF cond THEN statement \\
 \textbf{p37:} \> else \(\to\) IF cond THEN statement ELSE statement \\
 \textbf{p38:} \> assignment \(\to\) ID ASSIGNMENT cond \\
-\textbf{p39:} \> loop \(\to\) for \\
-\textbf{p40:} \> loop \(\to\) while \\
-\textbf{p41:} \> for \(\to\) FOR for\_cond DO statement \\
-\textbf{p42:} \> for\_cond \(\to\) assignment TO cond \\
-\textbf{p43:} \> for\_cond \(\to\) assignment DOWNTO cond \\
-\textbf{p44:} \> while \(\to\) WHILE cond DO statement \\
-\textbf{p45:} \> cond \(\to\) expr \\
-\textbf{p46:} \> cond \(\to\) expr op\_rel expr \\
-\textbf{p47:} \> op\_rel \(\to\) = \\
-\textbf{p48:} \> op\_rel \(\to\) NOT\_EQUAL \\
-\textbf{p49:} \> op\_rel \(\to\) < \\
-\textbf{p50:} \> op\_rel \(\to\) LESS\_EQUAL \\
-\textbf{p51:} \> op\_rel \(\to\) > \\
-\textbf{p52:} \> op\_rel \(\to\) GREATER\_EQUAL \\
-\textbf{p53:} \> expr \(\to\) termo \\
-\textbf{p54:} \> expr \(\to\) expr op\_ad termo \\
-\textbf{p55:} \> termo \(\to\) fator \\
-\textbf{p56:} \> termo \(\to\) termo op\_mul fator \\
-\textbf{p57:} \> op\_ad \(\to\) + \\
-\textbf{p58:} \> op\_ad \(\to\) - \\
-\textbf{p59:} \> op\_ad \(\to\) OR \\
-\textbf{p60:} \> op\_mul \(\to\) * \\
-\textbf{p61:} \> op\_mul \(\to\) / \\
-\textbf{p62:} \> op\_mul \(\to\) AND \\
-\textbf{p63:} \> op\_mul \(\to\) MOD \\
-\textbf{p64:} \> op\_mul \(\to\) DIV \\
-\textbf{p65:} \> fator \(\to\) value \\
-\textbf{p66:} \> fator \(\to\) ( cond ) \\
-\textbf{p67:} \> fator \(\to\) NOT fator \\
-\textbf{p68:} \> value \(\to\) ID \\
-\textbf{p69:} \> value \(\to\) INT \\
-\textbf{p70:} \> value \(\to\) REAL \\
-\textbf{p71:} \> value \(\to\) STRING \\
-\textbf{p72:} \> value \(\to\) BOOL \\
-\textbf{p73:} \> value \(\to\) ID [ INT ] \\
-\textbf{p74:} \> value \(\to\) ID [ ID ] \\
-\textbf{p75:} \> value \(\to\) func\_call \\
-\textbf{p76:} \> func\_call \(\to\) ID ( args ) \\
-\textbf{p77:} \> args \(\to\) elems \\
-\textbf{p78:} \> args \(\to\) \(\epsilon\) \\
-\textbf{p79:} \> elems \(\to\) elems , cond \\
-\textbf{p80:} \> elems \(\to\) cond \\
+\textbf{p39:} \> assignment \(\to\) ID [ INT ] ASSIGNMENT cond \\
+\textbf{p40:} \> assignment \(\to\) ID [ ID ] ASSIGNMENT cond \\
+\textbf{p41:} \> loop \(\to\) for \\
+\textbf{p42:} \> loop \(\to\) while \\
+\textbf{p43:} \> for \(\to\) FOR for\_cond DO statement \\
+\textbf{p44:} \> for\_cond \(\to\) assignment TO cond \\
+\textbf{p45:} \> for\_cond \(\to\) assignment DOWNTO cond \\
+\textbf{p46:} \> while \(\to\) WHILE cond DO statement \\
+\textbf{p47:} \> cond \(\to\) expr \\
+\textbf{p48:} \> cond \(\to\) expr op\_rel expr \\
+\textbf{p49:} \> op\_rel \(\to\) = \\
+\textbf{p50:} \> op\_rel \(\to\) NOT\_EQUAL \\
+\textbf{p51:} \> op\_rel \(\to\) < \\
+\textbf{p52:} \> op\_rel \(\to\) LESS\_EQUAL \\
+\textbf{p53:} \> op\_rel \(\to\) > \\
+\textbf{p54:} \> op\_rel \(\to\) GREATER\_EQUAL \\
+\textbf{p55:} \> expr \(\to\) termo \\
+\textbf{p56:} \> expr \(\to\) expr op\_ad termo \\
+\textbf{p57:} \> termo \(\to\) fator \\
+\textbf{p58:} \> termo \(\to\) termo op\_mul fator \\
+\textbf{p59:} \> op\_ad \(\to\) + \\
+\textbf{p60:} \> op\_ad \(\to\) - \\
+\textbf{p61:} \> op\_ad \(\to\) OR \\
+\textbf{p62:} \> op\_mul \(\to\) * \\
+\textbf{p63:} \> op\_mul \(\to\) / \\
+\textbf{p64:} \> op\_mul \(\to\) AND \\
+\textbf{p65:} \> op\_mul \(\to\) MOD \\
+\textbf{p66:} \> op\_mul \(\to\) DIV \\
+\textbf{p67:} \> fator \(\to\) value \\
+\textbf{p68:} \> fator \(\to\) ( cond ) \\
+\textbf{p69:} \> fator \(\to\) NOT fator \\
+\textbf{p70:} \> value \(\to\) ID \\
+\textbf{p71:} \> value \(\to\) INT \\
+\textbf{p72:} \> value \(\to\) REAL \\
+\textbf{p73:} \> value \(\to\) STRING \\
+\textbf{p74:} \> value \(\to\) BOOL \\
+\textbf{p75:} \> value \(\to\) ID [ INT ] \\
+\textbf{p76:} \> value \(\to\) ID [ ID ] \\
+\textbf{p77:} \> value \(\to\) func\_call \\
+\textbf{p78:} \> value \(\to\) CHAR \\
+\textbf{p79:} \> func\_call \(\to\) ID ( args ) \\
+\textbf{p80:} \> args \(\to\) elems \\
+\textbf{p81:} \> args \(\to\) \(\epsilon\) \\
+\textbf{p82:} \> elems \(\to\) elems , cond \\
+\textbf{p83:} \> elems \(\to\) cond \\
 \end{tabbing}
 
 \textcolor{red}{\textbf{TODO}}
