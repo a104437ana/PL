@@ -286,13 +286,18 @@ em conta as funções, um extra que não implementámos na analise semântica ne
 \chapter{Conclusão}
 
 Concluindo, conseguimos alcançar o objetivo principal deste projeto: construir um compilador para a linguagem Pascal Standard, que transforme código Pascal em código da máquina virtual.
-O nosso compilador é capaz de processar programas Pascal standart com declarações de variáveis, expressões aritméticas e comandos de controle de fluxo (if, while, for). Para além disto,
+O nosso compilador é capaz de processar programas Pascal standart com declarações de variáveis, expressões aritméticas, comandos de controle de fluxo (if, while, for) e funções. Para além disto,
 seguimos as etapas do projeto: construímos um analisador léxico, um analisador sintático, fizemos uma árvore sintática abstrata, fizemos um analisador semântico, geramos o código desejado
-e ainda fizemos testes de tudo isto, para garantir a correção de todos estes programas.
+e ainda fizemos testes de tudo isto, para garantir a correção de todos estes programas. Também testamos manualmente se os programas corriam como previsto na máquina virtual.
 
 \vspace{1em}
 
-Assim, concluímos que conseguimos cumprir os principais objetivos do projeto. Ficou por fazer alguns extras como otimizações do código máquina e suporte a subprogramas (functions e procedures).
-Estes subprogramas estão suportados até ao nosso analisador sintático inclusive, mas depois não os implementamos nas fases seguintes.
+Ficou por fazer alguns extras como otimizações do código máquina e suporte a procedures (que seria bastante parecido
+com as funções que fizemos).
+As procedures estão suportados até ao nosso analisador sintático inclusive, mas depois não as implementamos nas fases seguintes.
+
+\vspace{1em}
+
+Assim, concluímos que conseguimos cumprir os principais objetivos do projeto. 
 
 \end{document}
